@@ -1,0 +1,24 @@
+Auth:
+  JwtSecretKey:
+HttpServer:
+  Port: 8080
+  ShutdownTimeout: 2s
+Database:
+  Main:
+    Host: '127.0.0.1'
+    Port: '5432'
+    User:
+    Password:
+    Name:
+    SslMode: 'disable'
+  Replica:
+    Host: '127.0.0.1'
+    Port: '5432'
+    User:
+    Password:
+    Name:
+    SslMode: 'disable'
+Transport:
+  User:
+    Host: http://127.0.0.1:8081
+    Timeout: 5s
