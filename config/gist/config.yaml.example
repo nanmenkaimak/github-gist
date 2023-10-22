@@ -1,0 +1,20 @@
+Auth:
+  JwtSecretKey:
+HttpServer:
+  Port:
+  ShutdownTimeout:
+Database:
+  Main:
+    Host: '127.0.0.1'
+    Port: '5432'
+    User:
+    Password:
+    Name:
+    SslMode: 'disable'
+  Replica:
+    Host: '127.0.0.1'
+    Port: '5432'
+    User:
+    Password:
+    Name:
+    SslMode: 'disable'
