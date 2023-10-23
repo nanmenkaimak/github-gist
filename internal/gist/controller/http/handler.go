@@ -114,3 +114,43 @@ func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gists)
 }
+
+func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	gistID, err := uuid.Parse(ctx.Param("id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+	username := ctx.Param("username")
+
+	var updatedGist entity.GistRequest
+
+	if err := ctx.BindJSON(&updatedGist); err != nil {
+		h.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	updatedGist.Gist.ID = gistID
+
+	request := gist.UpdateGistRequest{
+		Username: username,
+		Gist:     updatedGist,
+		UserID:   userID.ID,
+	}
+
+	err = h.gistService.UpdateGistByID(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to UpdateGistByID err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
+}

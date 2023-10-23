@@ -80,3 +80,20 @@ func (a *Service) GetAllGistsOfUser(ctx context.Context, request GetGistRequest)
 
 	return &gists, err
 }
+
+func (a *Service) UpdateGistByID(ctx context.Context, request UpdateGistRequest) error {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUser request err: %v", err)
+	}
+
+	if user.ID != request.UserID {
+		return fmt.Errorf("it is not your gist err: %v", err)
+	}
+
+	err = a.repo.UpdateGistByID(request.Gist)
+	if err != nil {
+		return fmt.Errorf("update gist err: %v", err)
+	}
+	return nil
+}

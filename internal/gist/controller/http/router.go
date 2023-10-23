@@ -35,6 +35,7 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		gist.GET("/all-gists", eh.GetAllGists)
 		gist.GET("/:username/:id", eh.GetGistByID)
 		gist.GET("/:username/gists", eh.GetAllGistsOfUser)
+		gist.PUT("/:username/:id/edit", eh.UpdateGistByID)
 	}
 
 	return r
