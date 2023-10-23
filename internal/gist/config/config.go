@@ -6,6 +6,7 @@ type Config struct {
 	HttpServer HttpServer `yaml:"HttpServer"`
 	Database   Database   `yaml:"Database"`
 	Auth       Auth       `yaml:"JwtSecretKey"`
+	Transport  Transport  `json:"Transport"`
 }
 
 type HttpServer struct {
@@ -29,4 +30,13 @@ type DbNode struct {
 
 type Auth struct {
 	JwtSecretKey string `yaml:"JwtSecretKey"`
+}
+
+type Transport struct {
+	User UserTransport `yaml:"User"`
+}
+
+type UserTransport struct {
+	Host    string        `yaml:"Host"`
+	Timeout time.Duration `yaml:"Timeout"`
 }

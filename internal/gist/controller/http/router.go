@@ -33,7 +33,8 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		gist.Use(s.authMiddleware.Auth())
 		gist.POST("/create-gist", eh.CreateGist)
 		gist.GET("/all-gists", eh.GetAllGists)
-		gist.GET("/:id", eh.GetGistByID)
+		gist.GET("/:username/:id", eh.GetGistByID)
+		gist.GET("/:username/gists", eh.GetAllGistsOfUser)
 	}
 
 	return r

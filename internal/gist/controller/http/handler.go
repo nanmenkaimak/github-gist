@@ -62,14 +62,24 @@ func (h *EndpointHandler) GetAllGists(ctx *gin.Context) {
 }
 
 func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
-	id, err := uuid.Parse(ctx.Param("id"))
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+
+	gistID, err := uuid.Parse(ctx.Param("id"))
 	if err != nil {
 		h.logger.Errorf("parsing value from url err: %v", err)
 		return
 	}
+	username := ctx.Param("username")
 
-	request := gist.GetGistByIDRequest{
-		GistID: id,
+	request := gist.GetGistRequest{
+		GistID:   gistID,
+		Username: username,
+		UserID:   userID.ID,
 	}
 
 	gist, err := h.gistService.GetGistByID(ctx.Request.Context(), request)
@@ -80,4 +90,27 @@ func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gist)
+}
+
+func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	username := ctx.Param("username")
+
+	request := gist.GetGistRequest{
+		Username: username,
+		UserID:   userID.ID,
+	}
+
+	gists, err := h.gistService.GetAllGistsOfUser(ctx, request)
+	if err != nil {
+		h.logger.Errorf("failed to GetAllGistsOfUser err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.JSON(http.StatusOK, gists)
 }

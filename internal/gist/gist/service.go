@@ -6,15 +6,18 @@ import (
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	"github.com/nanmenkaimak/github-gist/internal/gist/repository"
+	"github.com/nanmenkaimak/github-gist/internal/gist/transport"
 )
 
 type Service struct {
-	repo repository.Repository
+	repo          repository.Repository
+	userTransport *transport.UserTransport
 }
 
-func NewGistService(repo repository.Repository) UseCase {
+func NewGistService(repo repository.Repository, userTransport *transport.UserTransport) UseCase {
 	return &Service{
-		repo: repo,
+		repo:          repo,
+		userTransport: userTransport,
 	}
 }
 
@@ -40,8 +43,16 @@ func (a *Service) GetAllGists(ctx context.Context) (*[]entity.GistRequest, error
 	return &allGists, nil
 }
 
-func (a *Service) GetGistByID(ctx context.Context, request GetGistByIDRequest) (*entity.GistRequest, error) {
-	gist, err := a.repo.GetOtherGistByID(request.GistID)
+func (a *Service) GetGistByID(ctx context.Context, request GetGistRequest) (*entity.GistRequest, error) {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUser request err: %v", err)
+	}
+	ownGist := false
+	if user.ID == request.UserID {
+		ownGist = true
+	}
+	gist, err := a.repo.GetGistByID(request.GistID, ownGist)
 	if err != nil {
 		return nil, fmt.Errorf("getting gist err: %v", err)
 	}
@@ -51,4 +62,21 @@ func (a *Service) GetGistByID(ctx context.Context, request GetGistByIDRequest) (
 	}
 
 	return &gist, nil
+}
+
+func (a *Service) GetAllGistsOfUser(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error) {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUser request err: %v", err)
+	}
+	ownGist := false
+	if user.ID == request.UserID {
+		ownGist = true
+	}
+	gists, err := a.repo.GetAllGistsOfUser(user.ID, ownGist)
+	if err != nil {
+		return nil, fmt.Errorf("getting all gists of user err: %v", err)
+	}
+
+	return &gists, err
 }

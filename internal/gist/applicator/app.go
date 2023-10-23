@@ -4,12 +4,14 @@ import (
 	"context"
 	"github.com/nanmenkaimak/github-gist/internal/gist/auth"
 	"github.com/nanmenkaimak/github-gist/internal/gist/config"
-	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http"
+	http2 "github.com/nanmenkaimak/github-gist/internal/gist/controller/http"
 	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/gist/database/dbpostgres"
 	"github.com/nanmenkaimak/github-gist/internal/gist/gist"
 	"github.com/nanmenkaimak/github-gist/internal/gist/repository"
+	"github.com/nanmenkaimak/github-gist/internal/gist/transport"
 	"go.uber.org/zap"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -59,15 +61,19 @@ func (a *App) Run() {
 
 	authService := auth.NewService(cfg.Auth)
 
-	gistService := gist.NewGistService(repo)
+	client := &http.Client{}
+
+	userTransport := transport.NewTransport(cfg.Transport.User, client)
+
+	gistService := gist.NewGistService(repo, userTransport)
 
 	authMiddleware := middleware.NewJwtV1Middleware(authService, l)
 
-	endpointHandler := http.NewEndpointHandler(gistService, l)
+	endpointHandler := http2.NewEndpointHandler(gistService, l)
 
-	router := http.NewRouter(l, authMiddleware)
+	router := http2.NewRouter(l, authMiddleware)
 	httpCfg := cfg.HttpServer
-	server, err := http.NewServer(httpCfg.Port, httpCfg.ShutdownTimeout, router, l, endpointHandler)
+	server, err := http2.NewServer(httpCfg.Port, httpCfg.ShutdownTimeout, router, l, endpointHandler)
 	if err != nil {
 		l.Fatalf("failed to create server err: %v", err)
 	}
