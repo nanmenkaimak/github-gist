@@ -18,3 +18,7 @@ Database:
     Password:
     Name:
     SslMode: 'disable'
+Transport:
+  User:
+    Host: http://127.0.0.1:8081
+    Timeout: 5s
