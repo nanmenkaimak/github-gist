@@ -97,3 +97,20 @@ func (a *Service) UpdateGistByID(ctx context.Context, request UpdateGistRequest)
 	}
 	return nil
 }
+
+func (a *Service) DeleteGistByID(ctx context.Context, request GetGistRequest) error {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUser request err: %v", err)
+	}
+
+	if user.ID != request.UserID {
+		return fmt.Errorf("it is not your gist err: %v", err)
+	}
+
+	err = a.repo.DeleteGistByID(request.GistID)
+	if err != nil {
+		return fmt.Errorf("delete gist err: %v", err)
+	}
+	return nil
+}

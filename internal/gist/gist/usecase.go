@@ -11,4 +11,5 @@ type UseCase interface {
 	GetGistByID(ctx context.Context, request GetGistRequest) (*entity.GistRequest, error)
 	GetAllGistsOfUser(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error)
 	UpdateGistByID(ctx context.Context, request UpdateGistRequest) error
+	DeleteGistByID(ctx context.Context, request GetGistRequest) error
 }

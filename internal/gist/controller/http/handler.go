@@ -154,3 +154,33 @@ func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 
 	ctx.Status(http.StatusNoContent)
 }
+
+func (h *EndpointHandler) DeleteGistByID(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	gistID, err := uuid.Parse(ctx.Param("id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+	username := ctx.Param("username")
+
+	request := gist.GetGistRequest{
+		Username: username,
+		GistID:   gistID,
+		UserID:   userID.ID,
+	}
+
+	err = h.gistService.DeleteGistByID(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to DeleteGistByID err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
+}
