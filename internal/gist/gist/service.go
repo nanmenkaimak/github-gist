@@ -87,6 +87,24 @@ func (a *Service) GetAllGistsOfUser(ctx context.Context, request GetGistRequest)
 	return &gists, err
 }
 
+func (a *Service) GetGistsByVisibility(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error) {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUser request err: %v", err)
+	}
+
+	if user.ID != request.UserID {
+		return nil, fmt.Errorf("different user err: %v", err)
+	}
+
+	gists, err := a.repo.GetGistsByVisibility(request.UserID, request.Visibility)
+	if err != nil {
+		return nil, fmt.Errorf("getting gists by visibility err: %v", err)
+	}
+
+	return &gists, nil
+}
+
 func (a *Service) UpdateGistByID(ctx context.Context, request UpdateGistRequest) error {
 	user, err := a.userTransport.GetUser(ctx, request.Username)
 	if err != nil {

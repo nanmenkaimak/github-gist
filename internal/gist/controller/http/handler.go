@@ -121,6 +121,52 @@ func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gists)
 }
 
+func (h *EndpointHandler) GetAllSecretGists(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	username := ctx.Param("username")
+	request := gist.GetGistRequest{
+		Username:   username,
+		UserID:     userID.ID,
+		Visibility: false,
+	}
+
+	gists, err := h.gistService.GetGistsByVisibility(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to GetAllSecretGists err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.JSON(http.StatusOK, gists)
+}
+
+func (h *EndpointHandler) GetAllPublicGists(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	username := ctx.Param("username")
+	request := gist.GetGistRequest{
+		Username:   username,
+		UserID:     userID.ID,
+		Visibility: true,
+	}
+
+	gists, err := h.gistService.GetGistsByVisibility(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to GetAllSecretGists err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.JSON(http.StatusOK, gists)
+}
+
 func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {

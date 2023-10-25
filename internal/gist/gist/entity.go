@@ -10,9 +10,10 @@ type CreateGistResponse struct {
 }
 
 type GetGistRequest struct {
-	GistID   uuid.UUID
-	Username string
-	UserID   uuid.UUID
+	GistID     uuid.UUID
+	Username   string
+	UserID     uuid.UUID
+	Visibility bool
 }
 
 type UpdateGistRequest struct {

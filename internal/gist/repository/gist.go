@@ -144,6 +144,39 @@ func (r *Repo) GetAllGistsOfUser(userID uuid.UUID, ownGists bool) ([]entity.Gist
 	return allGistsReq, nil
 }
 
+func (r *Repo) GetGistsByVisibility(userID uuid.UUID, visibility bool) ([]entity.GistRequest, error) {
+	var allGistsReq []entity.GistRequest
+
+	var allGists []entity.Gist
+
+	gists := r.replica.Db.Where("user_id = ? and visible = ?", userID, visibility).Find(&allGists)
+	if gists.Error != nil {
+		return nil, gists.Error
+	}
+
+	for i := 0; i < len(allGists); i++ {
+		var lastCommit entity.Commit
+		err := r.replica.Db.Where("gist_id = ?", allGists[i].ID).Order("created_at desc").Find(&lastCommit).Limit(1).Error
+		if err != nil {
+			return nil, err
+		}
+		var allFiles []entity.File
+		err = r.replica.Db.Where("commit_id = ?", lastCommit.ID).Find(&allFiles).Error
+		if err != nil {
+			return nil, err
+		}
+
+		res := entity.GistRequest{
+			Gist:   allGists[i],
+			Commit: lastCommit,
+			Files:  allFiles,
+		}
+		allGistsReq = append(allGistsReq, res)
+	}
+
+	return allGistsReq, nil
+}
+
 func (r *Repo) UpdateGistByID(updatedGist entity.GistRequest) error {
 	err := r.main.Db.Transaction(func(tx *gorm.DB) error {
 		updatedGist.Gist.UpdatedAt = time.Now()
