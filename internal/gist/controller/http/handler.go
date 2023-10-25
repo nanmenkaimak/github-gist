@@ -51,7 +51,13 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 }
 
 func (h *EndpointHandler) GetAllGists(ctx *gin.Context) {
-	allGists, err := h.gistService.GetAllGists(ctx.Request.Context())
+	direction := ctx.Query("direction")
+	sort := ctx.Query("sort")
+	request := gist.GetAllGistsRequest{
+		Direction: direction,
+		Sort:      sort,
+	}
+	allGists, err := h.gistService.GetAllGists(ctx.Request.Context(), request)
 	if err != nil {
 		h.logger.Errorf("failed to GetAllGists err: %v", err)
 		ctx.Status(http.StatusBadRequest)

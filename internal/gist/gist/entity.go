@@ -20,3 +20,8 @@ type UpdateGistRequest struct {
 	UserID   uuid.UUID
 	Gist     entity.GistRequest
 }
+
+type GetAllGistsRequest struct {
+	Direction string
+	Sort      string
+}

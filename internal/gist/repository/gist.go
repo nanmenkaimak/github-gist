@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	"gorm.io/gorm"
@@ -39,12 +40,12 @@ func (r *Repo) CreateGist(newGist entity.GistRequest) (uuid.UUID, error) {
 	return newGist.Gist.ID, nil
 }
 
-func (r *Repo) GetOtherAllGists() ([]entity.GistRequest, error) {
+func (r *Repo) GetOtherAllGists(sort string, direction string) ([]entity.GistRequest, error) {
 	var allGistsReq []entity.GistRequest
 
 	var allGists []entity.Gist
 
-	err := r.replica.Db.Where("visible = true").Find(&allGists).Error
+	err := r.replica.Db.Order(fmt.Sprintf("%s %s", sort, direction)).Where("visible = true").Find(&allGists).Error
 	if err != nil {
 		return nil, err
 	}

@@ -15,7 +15,7 @@ type Repository interface {
 
 type GistRepository interface {
 	CreateGist(request entity.GistRequest) (uuid.UUID, error)
-	GetOtherAllGists() ([]entity.GistRequest, error)
+	GetOtherAllGists(sort string, direction string) ([]entity.GistRequest, error)
 	GetGistByID(gistID uuid.UUID, ownGist bool) (entity.GistRequest, error)
 	GetAllGistsOfUser(userID uuid.UUID, ownGists bool) ([]entity.GistRequest, error)
 	UpdateGistByID(updatedGist entity.GistRequest) error

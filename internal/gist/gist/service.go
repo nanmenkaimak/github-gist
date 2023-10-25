@@ -34,8 +34,14 @@ func (a *Service) CreateGist(ctx context.Context, gistRequest entity.GistRequest
 	return response, nil
 }
 
-func (a *Service) GetAllGists(ctx context.Context) (*[]entity.GistRequest, error) {
-	allGists, err := a.repo.GetOtherAllGists()
+func (a *Service) GetAllGists(ctx context.Context, request GetAllGistsRequest) (*[]entity.GistRequest, error) {
+	if request.Sort == "" {
+		request.Sort = "created_at"
+	}
+	if request.Direction == "" {
+		request.Direction = "desc"
+	}
+	allGists, err := a.repo.GetOtherAllGists(request.Sort, request.Direction)
 	if err != nil {
 		return nil, fmt.Errorf("getting all gists err: %v", err)
 	}
