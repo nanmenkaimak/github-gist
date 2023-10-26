@@ -17,7 +17,7 @@ type GistRepository interface {
 	CreateGist(request entity.GistRequest) (uuid.UUID, error)
 	GetOtherAllGists(sort string, direction string) ([]entity.GistRequest, error)
 	GetGistByID(gistID uuid.UUID, ownGist bool) (entity.GistRequest, error)
-	GetAllGistsOfUser(userID uuid.UUID, ownGists bool) ([]entity.GistRequest, error)
+	GetAllGistsOfUser(userID uuid.UUID, ownGists bool, searchingStr string) ([]entity.GistRequest, error)
 	GetGistsByVisibility(userID uuid.UUID, visibility bool) ([]entity.GistRequest, error)
 	UpdateGistByID(updatedGist entity.GistRequest) error
 	DeleteGistByID(id uuid.UUID) error

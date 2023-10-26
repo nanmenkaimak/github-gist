@@ -14,6 +14,7 @@ type GetGistRequest struct {
 	Username   string
 	UserID     uuid.UUID
 	Visibility bool
+	Searching  string
 }
 
 type UpdateGistRequest struct {

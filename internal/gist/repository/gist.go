@@ -107,7 +107,7 @@ func (r *Repo) GetGistByID(gistID uuid.UUID, ownGist bool) (entity.GistRequest, 
 	return gistReq, nil
 }
 
-func (r *Repo) GetAllGistsOfUser(userID uuid.UUID, ownGists bool) ([]entity.GistRequest, error) {
+func (r *Repo) GetAllGistsOfUser(userID uuid.UUID, ownGists bool, searchingStr string) ([]entity.GistRequest, error) {
 	var allGistsReq []entity.GistRequest
 
 	var allGists []entity.Gist
@@ -116,7 +116,7 @@ func (r *Repo) GetAllGistsOfUser(userID uuid.UUID, ownGists bool) ([]entity.Gist
 	if !ownGists {
 		gists.Where("visible = true")
 	}
-	gists.Find(&allGists)
+	gists.Where("name like ?", fmt.Sprint("%"+searchingStr+"%")).Find(&allGists)
 	if gists.Error != nil {
 		return nil, gists.Error
 	}

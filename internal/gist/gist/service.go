@@ -79,7 +79,8 @@ func (a *Service) GetAllGistsOfUser(ctx context.Context, request GetGistRequest)
 	if user.ID == request.UserID {
 		ownGist = true
 	}
-	gists, err := a.repo.GetAllGistsOfUser(user.ID, ownGist)
+
+	gists, err := a.repo.GetAllGistsOfUser(user.ID, ownGist, request.Searching)
 	if err != nil {
 		return nil, fmt.Errorf("getting all gists of user err: %v", err)
 	}

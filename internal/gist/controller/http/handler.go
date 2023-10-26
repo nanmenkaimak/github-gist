@@ -106,10 +106,12 @@ func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
 		return
 	}
 	username := ctx.Param("username")
+	q := ctx.Query("q")
 
 	request := gist.GetGistRequest{
-		Username: username,
-		UserID:   userID.ID,
+		Username:  username,
+		UserID:    userID.ID,
+		Searching: q,
 	}
 
 	gists, err := h.gistService.GetAllGistsOfUser(ctx, request)
@@ -235,4 +237,8 @@ func (h *EndpointHandler) DeleteGistByID(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusNoContent)
+}
+
+func (h *EndpointHandler) GetGistsBySearching(ctx *gin.Context) {
+
 }
