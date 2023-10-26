@@ -1,10 +1,12 @@
 package http
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
 	"go.uber.org/zap"
 	"net/http"
+	"unicode"
 )
 
 type EndpointHandler struct {
@@ -27,6 +29,13 @@ func (f *EndpointHandler) Login(ctx *gin.Context) {
 
 	if err := ctx.BindJSON(&request); err != nil {
 		f.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	err := validPassword(request.Password)
+	if err != nil {
+		f.logger.Errorf("validPassword err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
@@ -79,4 +88,22 @@ func (f *EndpointHandler) RenewToken(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, response)
+}
+
+func validPassword(s string) error {
+next:
+	for name, classes := range map[string][]*unicode.RangeTable{
+		"upper case": {unicode.Upper, unicode.Title},
+		"lower case": {unicode.Lower},
+		"numeric":    {unicode.Number, unicode.Digit},
+		"special":    {unicode.Space, unicode.Symbol, unicode.Punct, unicode.Mark},
+	} {
+		for _, r := range s {
+			if unicode.IsOneOf(classes, r) {
+				continue next
+			}
+		}
+		return fmt.Errorf("password must have at least one %s character", name)
+	}
+	return nil
 }

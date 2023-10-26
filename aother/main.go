@@ -27,7 +27,7 @@ func main() {
 		LastName:  "aristanov",
 		Email:     "eine@gmail.com",
 		Username:  "nanmenkaimak",
-		Password:  hashPassword("nanmenkaimak"),
+		Password:  hashPassword("Nanmenkaimak1*"),
 		RoleID:    1,
 	}
 
