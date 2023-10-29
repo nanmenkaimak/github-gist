@@ -33,12 +33,18 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		gist.Use(s.authMiddleware.Auth())
 		gist.POST("/create-gist", eh.CreateGist)
 		gist.GET("/all-gists", eh.GetAllGists)
-		gist.GET("/:username/:id", eh.GetGistByID)
+		gist.GET("/:username/:gist_id", eh.GetGistByID)
 		gist.GET("/:username/gists", eh.GetAllGistsOfUser)
 		gist.GET("/:username/secret", eh.GetAllSecretGists)
 		gist.GET("/:username/public", eh.GetAllPublicGists)
-		gist.PUT("/:username/:id/edit", eh.UpdateGistByID)
-		gist.DELETE("/:username/:id/edit", eh.DeleteGistByID)
+		gist.PUT("/:username/:gist_id/edit", eh.UpdateGistByID)
+		gist.DELETE("/:username/:gist_id/edit", eh.DeleteGistByID)
+
+		gist.POST("/:username/:gist_id/star", eh.StarGist)
+		gist.GET("/:username/starred", eh.GetStaredGists)
+
+		gist.POST("/:username/:gist_id/fork", eh.ForkGist)
+		gist.GET("/:username/forked", eh.GetForkedGists)
 	}
 
 	return r

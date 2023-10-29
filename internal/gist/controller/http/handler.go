@@ -75,7 +75,7 @@ func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 		return
 	}
 
-	gistID, err := uuid.Parse(ctx.Param("id"))
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
 	if err != nil {
 		h.logger.Errorf("parsing value from url err: %v", err)
 		return
@@ -176,7 +176,7 @@ func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 		ctx.Status(http.StatusUnauthorized)
 		return
 	}
-	gistID, err := uuid.Parse(ctx.Param("id"))
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
 	if err != nil {
 		h.logger.Errorf("parsing value from url err: %v", err)
 		return
@@ -216,7 +216,7 @@ func (h *EndpointHandler) DeleteGistByID(ctx *gin.Context) {
 		ctx.Status(http.StatusUnauthorized)
 		return
 	}
-	gistID, err := uuid.Parse(ctx.Param("id"))
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
 	if err != nil {
 		h.logger.Errorf("parsing value from url err: %v", err)
 		return
@@ -239,6 +239,84 @@ func (h *EndpointHandler) DeleteGistByID(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-func (h *EndpointHandler) GetGistsBySearching(ctx *gin.Context) {
+func (h *EndpointHandler) StarGist(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
 
+	request := entity.Star{
+		UserID: userID.ID,
+		GistID: gistID,
+	}
+
+	err = h.gistService.StarGist(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to StarGist err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
+}
+
+func (h *EndpointHandler) GetStaredGists(ctx *gin.Context) {
+	username := ctx.Param("username")
+	request := gist.OtherGistRequest{
+		Username: username,
+	}
+
+	gists, err := h.gistService.GetStaredGists(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to GetStaredGists err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gists)
+}
+
+func (h *EndpointHandler) ForkGist(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
+	username := ctx.Param("username")
+
+	request := gist.ForkRequest{
+		Fork: entity.Fork{
+			UserID: userID.ID,
+			GistID: gistID,
+		},
+		Username: username,
+	}
+
+	err = h.gistService.ForkGist(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to ForkGist err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
+}
+
+func (h *EndpointHandler) GetForkedGists(ctx *gin.Context) {
+	username := ctx.Param("username")
+	request := gist.OtherGistRequest{
+		Username: username,
+	}
+
+	gists, err := h.gistService.GetForkedGists(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to GetForkedGists err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gists)
 }

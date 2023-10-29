@@ -27,3 +27,12 @@ type GetAllGistsRequest struct {
 	Direction string
 	Sort      string
 }
+
+type OtherGistRequest struct {
+	Username string
+}
+
+type ForkRequest struct {
+	Fork     entity.Fork
+	Username string
+}

@@ -9,8 +9,8 @@ import (
 type Repository interface {
 	GistRepository
 	ForkRepository
-	Comment
-	Star
+	CommentRepository
+	StarRepository
 }
 
 type GistRepository interface {
@@ -24,12 +24,17 @@ type GistRepository interface {
 }
 
 type ForkRepository interface {
+	ForkGist(newFork entity.Fork) error
+	GetForkedGistByUser(userID uuid.UUID) ([]entity.GistRequest, error)
 }
 
-type Comment interface {
+type CommentRepository interface {
 }
 
-type Star interface {
+type StarRepository interface {
+	StarGist(newStar entity.Star) error
+	GetStarredGists(userID uuid.UUID) ([]entity.GistRequest, error)
+	GetAllStargazers()
 }
 
 type Repo struct {

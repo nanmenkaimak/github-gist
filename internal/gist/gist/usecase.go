@@ -6,6 +6,12 @@ import (
 )
 
 type UseCase interface {
+	Gist
+	Star
+	Fork
+}
+
+type Gist interface {
 	CreateGist(ctx context.Context, gistRequest entity.GistRequest) (*CreateGistResponse, error)
 	GetAllGists(ctx context.Context, request GetAllGistsRequest) (*[]entity.GistRequest, error)
 	GetGistByID(ctx context.Context, request GetGistRequest) (*entity.GistRequest, error)
@@ -13,4 +19,14 @@ type UseCase interface {
 	GetGistsByVisibility(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error)
 	UpdateGistByID(ctx context.Context, request UpdateGistRequest) error
 	DeleteGistByID(ctx context.Context, request GetGistRequest) error
+}
+
+type Star interface {
+	StarGist(ctx context.Context, request entity.Star) error
+	GetStaredGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error)
+}
+
+type Fork interface {
+	ForkGist(ctx context.Context, request ForkRequest) error
+	GetForkedGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error)
 }

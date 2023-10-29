@@ -139,3 +139,55 @@ func (a *Service) DeleteGistByID(ctx context.Context, request GetGistRequest) er
 	}
 	return nil
 }
+
+func (a *Service) StarGist(ctx context.Context, request entity.Star) error {
+	err := a.repo.StarGist(request)
+	if err != nil {
+		return fmt.Errorf("StarGist request err: %v", err)
+	}
+	return nil
+}
+
+func (a *Service) GetStaredGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error) {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUser request err: %v", err)
+	}
+
+	gists, err := a.repo.GetStarredGists(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("getting starred gists err: %v", err)
+	}
+
+	return &gists, nil
+}
+
+func (a *Service) ForkGist(ctx context.Context, request ForkRequest) error {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUser request err: %v", err)
+	}
+
+	if user.ID == request.Fork.UserID {
+		return fmt.Errorf("it is your gist")
+	}
+	err = a.repo.ForkGist(request.Fork)
+	if err != nil {
+		return fmt.Errorf("ForkGist request err: %v", err)
+	}
+	return nil
+}
+
+func (a *Service) GetForkedGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error) {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUser request err: %v", err)
+	}
+
+	gists, err := a.repo.GetForkedGistByUser(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("getting forked gists err: %v", err)
+	}
+
+	return &gists, nil
+}
