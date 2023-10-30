@@ -191,3 +191,19 @@ func (a *Service) GetForkedGists(ctx context.Context, request OtherGistRequest) 
 
 	return &gists, nil
 }
+
+func (a *Service) CreateComment(ctx context.Context, newComment entity.Comment) error {
+	err := a.repo.CreateComment(newComment)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *Service) GetCommentsOfGist(ctx context.Context, request GetGistRequest) (*[]entity.Comment, error) {
+	gists, err := a.repo.GetAllCommentsOfGist(request.GistID)
+	if err != nil {
+		return nil, err
+	}
+	return &gists, err
+}

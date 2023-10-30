@@ -9,6 +9,7 @@ type UseCase interface {
 	Gist
 	Star
 	Fork
+	Comment
 }
 
 type Gist interface {
@@ -29,4 +30,9 @@ type Star interface {
 type Fork interface {
 	ForkGist(ctx context.Context, request ForkRequest) error
 	GetForkedGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error)
+}
+
+type Comment interface {
+	CreateComment(ctx context.Context, newComment entity.Comment) error
+	GetCommentsOfGist(ctx context.Context, request GetGistRequest) (*[]entity.Comment, error)
 }

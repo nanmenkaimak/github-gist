@@ -29,6 +29,9 @@ type ForkRepository interface {
 }
 
 type CommentRepository interface {
+	CreateComment(newComment entity.Comment) error
+	GetAllCommentsOfGist(gistID uuid.UUID) ([]entity.Comment, error)
+	UpdateComment()
 }
 
 type StarRepository interface {

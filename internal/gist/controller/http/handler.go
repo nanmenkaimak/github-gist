@@ -247,6 +247,10 @@ func (h *EndpointHandler) StarGist(ctx *gin.Context) {
 		return
 	}
 	gistID, err := uuid.Parse(ctx.Param("gist_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
 
 	request := entity.Star{
 		UserID: userID.ID,
@@ -286,6 +290,10 @@ func (h *EndpointHandler) ForkGist(ctx *gin.Context) {
 		return
 	}
 	gistID, err := uuid.Parse(ctx.Param("gist_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
 	username := ctx.Param("username")
 
 	request := gist.ForkRequest{
@@ -319,4 +327,56 @@ func (h *EndpointHandler) GetForkedGists(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gists)
+}
+
+func (h *EndpointHandler) CreateComment(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+	var request entity.Comment
+
+	if err := ctx.BindJSON(&request); err != nil {
+		h.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	request.GistID = gistID
+	request.UserID = userID.ID
+
+	err = h.gistService.CreateComment(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to CreateComment err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusCreated)
+}
+
+func (h *EndpointHandler) GetCommentsOfGist(ctx *gin.Context) {
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+
+	request := gist.GetGistRequest{
+		GistID: gistID,
+	}
+
+	comments, err := h.gistService.GetCommentsOfGist(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to GetCommentsOfGist err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, comments)
 }

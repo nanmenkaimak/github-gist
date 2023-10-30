@@ -45,6 +45,9 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 		gist.POST("/:username/:gist_id/fork", eh.ForkGist)
 		gist.GET("/:username/forked", eh.GetForkedGists)
+
+		gist.POST("/:username/:gist_id/comment", eh.CreateComment)
+		gist.GET("/:username/:gist_id/comment", eh.GetCommentsOfGist)
 	}
 
 	return r
