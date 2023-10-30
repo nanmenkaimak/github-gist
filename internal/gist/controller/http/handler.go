@@ -297,36 +297,42 @@ func (h *EndpointHandler) ForkGist(ctx *gin.Context) {
 	username := ctx.Param("username")
 
 	request := gist.ForkRequest{
-		Fork: entity.Fork{
-			UserID: userID.ID,
-			GistID: gistID,
-		},
+		UserID:   userID.ID,
 		Username: username,
+		GistID:   gistID,
 	}
 
-	err = h.gistService.ForkGist(ctx.Request.Context(), request)
+	response, err := h.gistService.ForkGist(ctx.Request.Context(), request)
 	if err != nil {
 		h.logger.Errorf("failed to ForkGist err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	ctx.Status(http.StatusNoContent)
+
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (h *EndpointHandler) GetForkedGists(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
 	username := ctx.Param("username")
-	request := gist.OtherGistRequest{
+	request := gist.GetGistRequest{
 		Username: username,
+		UserID:   userID.ID,
 	}
 
-	gists, err := h.gistService.GetForkedGists(ctx.Request.Context(), request)
+	forkedGists, err := h.gistService.GetForkedGists(ctx.Request.Context(), request)
 	if err != nil {
-		h.logger.Errorf("failed to GetForkedGists err: %v", err)
+		h.logger.Errorf("failed to ForkGist err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gists)
+	ctx.JSON(http.StatusCreated, forkedGists)
 }
 
 func (h *EndpointHandler) CreateComment(ctx *gin.Context) {

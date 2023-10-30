@@ -13,26 +13,23 @@ func (r *Repo) ForkGist(newFork entity.Fork) error {
 	return nil
 }
 
-func (r *Repo) GetForkedGistByUser(userID uuid.UUID) ([]entity.GistRequest, error) {
-	var forks []entity.Fork
+func (r *Repo) GetForkedGistByUser(userID uuid.UUID, ownGists bool) ([]entity.GistRequest, error) {
+	var allGistsReq []entity.GistRequest
 
-	err := r.replica.Db.Where("user_id = ?", userID).Find(&forks).Error
-	if err != nil {
-		return nil, err
+	var allGists []entity.Gist
+
+	gists := r.replica.Db.Where("user_id = ? and is_forked = true", userID)
+	if !ownGists {
+		gists.Where("visible = true")
+	}
+	gists.Find(&allGists)
+	if gists.Error != nil {
+		return nil, gists.Error
 	}
 
-	var allGists []entity.GistRequest
-
-	for i := 0; i < len(forks); i++ {
-		var gist entity.Gist
-
-		res := r.replica.Db.Where("id = ?", forks[i].GistID).Find(&gist)
-		if res.Error != nil {
-			return nil, res.Error
-		}
-
+	for i := 0; i < len(allGists); i++ {
 		var lastCommit entity.Commit
-		err := r.replica.Db.Where("gist_id = ?", gist.ID).Order("created_at desc").Find(&lastCommit).Limit(1).Error
+		err := r.replica.Db.Where("gist_id = ?", allGists[i].ID).Order("created_at desc").Find(&lastCommit).Limit(1).Error
 		if err != nil {
 			return nil, err
 		}
@@ -42,12 +39,18 @@ func (r *Repo) GetForkedGistByUser(userID uuid.UUID) ([]entity.GistRequest, erro
 			return nil, err
 		}
 
-		gistReq := entity.GistRequest{
-			Gist:   gist,
+		res := entity.GistRequest{
+			Gist:   allGists[i],
 			Commit: lastCommit,
 			Files:  allFiles,
 		}
-		allGists = append(allGists, gistReq)
+		allGistsReq = append(allGistsReq, res)
 	}
-	return allGists, nil
+
+	return allGistsReq, nil
+}
+
+func (r *Repo) DeleteFork(id uuid.UUID) error {
+	err := r.main.Db.Where("id = ?", id).Delete(&entity.Fork{}).Error
+	return err
 }

@@ -25,19 +25,22 @@ type GistRepository interface {
 
 type ForkRepository interface {
 	ForkGist(newFork entity.Fork) error
-	GetForkedGistByUser(userID uuid.UUID) ([]entity.GistRequest, error)
+	GetForkedGistByUser(userID uuid.UUID, ownGists bool) ([]entity.GistRequest, error)
+	DeleteFork(id uuid.UUID) error
 }
 
 type CommentRepository interface {
 	CreateComment(newComment entity.Comment) error
 	GetAllCommentsOfGist(gistID uuid.UUID) ([]entity.Comment, error)
-	UpdateComment()
+	DeleteComment(id uuid.UUID) error
+	UpdateComment(updatedComment entity.Comment) error
 }
 
 type StarRepository interface {
 	StarGist(newStar entity.Star) error
 	GetStarredGists(userID uuid.UUID) ([]entity.GistRequest, error)
 	GetAllStargazers()
+	DeleteStar(gistID uuid.UUID, userID uuid.UUID) error
 }
 
 type Repo struct {

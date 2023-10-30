@@ -55,3 +55,8 @@ func (r *Repo) GetStarredGists(userID uuid.UUID) ([]entity.GistRequest, error) {
 func (r *Repo) GetAllStargazers() {
 
 }
+
+func (r *Repo) DeleteStar(gistID uuid.UUID, userID uuid.UUID) error {
+	err := r.main.Db.Where("gist_id = ? and user_id", gistID, userID).Delete(&entity.Star{}).Error
+	return err
+}

@@ -25,14 +25,17 @@ type Gist interface {
 type Star interface {
 	StarGist(ctx context.Context, request entity.Star) error
 	GetStaredGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error)
+	DeleteStar(ctx context.Context, request DeleteRequest) error //
 }
 
 type Fork interface {
-	ForkGist(ctx context.Context, request ForkRequest) error
-	GetForkedGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error)
+	ForkGist(ctx context.Context, request ForkRequest) (*ForkGistResponse, error)
+	GetForkedGists(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error)
 }
 
 type Comment interface {
 	CreateComment(ctx context.Context, newComment entity.Comment) error
 	GetCommentsOfGist(ctx context.Context, request GetGistRequest) (*[]entity.Comment, error)
+	DeleteComment()
+	UpdateComment()
 }

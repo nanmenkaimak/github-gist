@@ -9,6 +9,12 @@ type CreateGistResponse struct {
 	GistID uuid.UUID `json:"gist_id"`
 }
 
+type DeleteRequest struct {
+	GistID   uuid.UUID
+	UserID   uuid.UUID
+	Username string
+}
+
 type GetGistRequest struct {
 	GistID     uuid.UUID
 	Username   string
@@ -33,6 +39,11 @@ type OtherGistRequest struct {
 }
 
 type ForkRequest struct {
-	Fork     entity.Fork
+	GistID   uuid.UUID
+	UserID   uuid.UUID
 	Username string
+}
+
+type ForkGistResponse struct {
+	GistID uuid.UUID `json:"gist_id"`
 }

@@ -162,34 +162,102 @@ func (a *Service) GetStaredGists(ctx context.Context, request OtherGistRequest) 
 	return &gists, nil
 }
 
-func (a *Service) ForkGist(ctx context.Context, request ForkRequest) error {
+func (a *Service) DeleteStar(ctx context.Context, request DeleteRequest) error {
 	user, err := a.userTransport.GetUser(ctx, request.Username)
 	if err != nil {
 		return fmt.Errorf("GetUser request err: %v", err)
 	}
 
-	if user.ID == request.Fork.UserID {
-		return fmt.Errorf("it is your gist")
+	if user.ID != request.UserID {
+		return fmt.Errorf("it is not your gist err: %v", err)
 	}
-	err = a.repo.ForkGist(request.Fork)
+
+	err = a.repo.DeleteStar(request.GistID, request.UserID)
 	if err != nil {
-		return fmt.Errorf("ForkGist request err: %v", err)
+		return fmt.Errorf("delete star err: %v", err)
 	}
 	return nil
 }
 
-func (a *Service) GetForkedGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error) {
+func (a *Service) ForkGist(ctx context.Context, request ForkRequest) (*ForkGistResponse, error) {
 	user, err := a.userTransport.GetUser(ctx, request.Username)
 	if err != nil {
 		return nil, fmt.Errorf("GetUser request err: %v", err)
 	}
 
-	gists, err := a.repo.GetForkedGistByUser(user.ID)
+	if user.ID != request.UserID {
+		return nil, fmt.Errorf("it is not your gist err: %v", err)
+	}
+
+	gist, err := a.repo.GetGistByID(request.GistID, false)
+	if err != nil {
+		return nil, fmt.Errorf("getting gist err: %v", err)
+	}
+
+	var files []entity.File
+
+	for i := 0; i < len(gist.Files); i++ {
+		var file entity.File
+		file.Name = gist.Files[i].Name
+		file.Code = gist.Files[i].Code
+		files = append(files, file)
+	}
+	newForkedGist := entity.GistRequest{
+		Gist: entity.Gist{
+			UserID:      request.UserID,
+			Name:        gist.Gist.UserID.String(),
+			Description: gist.Gist.Description,
+			Visible:     gist.Gist.Visible,
+			IsForked:    true,
+		},
+		Commit: entity.Commit{
+			Comment: gist.Commit.Comment,
+		},
+		Files: files,
+	}
+
+	forkedGistID, err := a.repo.CreateGist(newForkedGist)
+	if err != nil {
+		return nil, fmt.Errorf("creating gist err: %v", err)
+	}
+
+	forkRequest := entity.Fork{
+		GistID:    gist.Gist.ID,
+		NewGistID: forkedGistID,
+	}
+
+	err = a.repo.ForkGist(forkRequest)
+	if err != nil {
+		return nil, fmt.Errorf("creating fork err: %v", err)
+	}
+
+	return &ForkGistResponse{
+		GistID: forkedGistID,
+	}, nil
+}
+
+func (a *Service) GetForkedGists(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error) {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUser request err: %v", err)
+	}
+
+	ownGist := false
+	if user.ID == request.UserID {
+		ownGist = true
+	}
+
+	gists, err := a.repo.GetForkedGistByUser(user.ID, ownGist)
 	if err != nil {
 		return nil, fmt.Errorf("getting forked gists err: %v", err)
 	}
 
 	return &gists, nil
+}
+
+func (a *Service) DeleteFork(ctx context.Context, request DeleteRequest) error {
+
+	return nil
 }
 
 func (a *Service) CreateComment(ctx context.Context, newComment entity.Comment) error {
@@ -206,4 +274,12 @@ func (a *Service) GetCommentsOfGist(ctx context.Context, request GetGistRequest)
 		return nil, err
 	}
 	return &gists, err
+}
+
+func (a *Service) DeleteComment() {
+
+}
+
+func (a *Service) UpdateComment() {
+
 }
