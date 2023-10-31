@@ -10,9 +10,10 @@ type CreateGistResponse struct {
 }
 
 type DeleteRequest struct {
-	GistID   uuid.UUID
-	UserID   uuid.UUID
-	Username string
+	GistID    uuid.UUID
+	CommentID uuid.UUID
+	UserID    uuid.UUID
+	Username  string
 }
 
 type GetGistRequest struct {
@@ -46,4 +47,11 @@ type ForkRequest struct {
 
 type ForkGistResponse struct {
 	GistID uuid.UUID `json:"gist_id"`
+}
+
+type UpdateCommentRequest struct {
+	CommentID uuid.UUID
+	Username  string
+	UserID    uuid.UUID
+	Text      string
 }

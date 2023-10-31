@@ -29,6 +29,6 @@ func (r *Repo) DeleteComment(id uuid.UUID) error {
 }
 
 func (r *Repo) UpdateComment(updatedComment entity.Comment) error {
-	err := r.main.Db.Model(&updatedComment).Where("id = ?", updatedComment.ID).Updates(updatedComment).Error
+	err := r.main.Db.Model(&updatedComment).Where("id = ?", updatedComment.ID).Update("text", updatedComment.Text).Error
 	return err
 }

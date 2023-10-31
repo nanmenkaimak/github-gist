@@ -282,6 +282,35 @@ func (h *EndpointHandler) GetStaredGists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gists)
 }
 
+func (h *EndpointHandler) DeleteStar(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+	username := ctx.Param("username")
+
+	request := gist.DeleteRequest{
+		GistID:   gistID,
+		Username: username,
+		UserID:   userID.ID,
+	}
+
+	err = h.gistService.DeleteStar(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to DeleteStar err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
+}
+
 func (h *EndpointHandler) ForkGist(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -385,4 +414,79 @@ func (h *EndpointHandler) GetCommentsOfGist(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, comments)
+}
+
+func (h *EndpointHandler) DeleteComment(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	gistID, err := uuid.Parse(ctx.Param("gist_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+	commentID, err := uuid.Parse(ctx.Param("comment_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+	username := ctx.Param("username")
+
+	request := gist.DeleteRequest{
+		GistID:    gistID,
+		Username:  username,
+		UserID:    userID.ID,
+		CommentID: commentID,
+	}
+
+	err = h.gistService.DeleteComment(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to DeleteComment err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
+}
+
+func (h *EndpointHandler) UpdateComment(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	commentID, err := uuid.Parse(ctx.Param("comment_id"))
+	if err != nil {
+		h.logger.Errorf("parsing value from url err: %v", err)
+		return
+	}
+	username := ctx.Param("username")
+
+	var updatedComment struct {
+		Text string `json:"text"`
+	}
+
+	if err := ctx.BindJSON(&updatedComment); err != nil {
+		h.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	request := gist.UpdateCommentRequest{
+		CommentID: commentID,
+		Username:  username,
+		UserID:    userID.ID,
+		Text:      updatedComment.Text,
+	}
+
+	err = h.gistService.UpdateComment(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to UpdateComment err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }

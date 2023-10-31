@@ -42,12 +42,15 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 		gist.POST("/:username/:gist_id/star", eh.StarGist)
 		gist.GET("/:username/starred", eh.GetStaredGists)
+		gist.DELETE("/:username/:gist_id/star", eh.DeleteStar)
 
 		gist.POST("/:username/:gist_id/fork", eh.ForkGist)
 		gist.GET("/:username/forked", eh.GetForkedGists)
 
 		gist.POST("/:username/:gist_id/comment", eh.CreateComment)
 		gist.GET("/:username/:gist_id/comment", eh.GetCommentsOfGist)
+		gist.DELETE("/:username/:gist_id/comment/:comment_id", eh.DeleteComment)
+		gist.PATCH("/:username/:gist_id/comment/:comment_id", eh.UpdateComment)
 	}
 
 	return r

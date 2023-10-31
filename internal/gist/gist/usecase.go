@@ -36,6 +36,6 @@ type Fork interface {
 type Comment interface {
 	CreateComment(ctx context.Context, newComment entity.Comment) error
 	GetCommentsOfGist(ctx context.Context, request GetGistRequest) (*[]entity.Comment, error)
-	DeleteComment()
-	UpdateComment()
+	DeleteComment(ctx context.Context, request DeleteRequest) error        //
+	UpdateComment(ctx context.Context, request UpdateCommentRequest) error //
 }

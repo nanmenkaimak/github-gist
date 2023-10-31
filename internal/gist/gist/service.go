@@ -255,11 +255,6 @@ func (a *Service) GetForkedGists(ctx context.Context, request GetGistRequest) (*
 	return &gists, nil
 }
 
-func (a *Service) DeleteFork(ctx context.Context, request DeleteRequest) error {
-
-	return nil
-}
-
 func (a *Service) CreateComment(ctx context.Context, newComment entity.Comment) error {
 	err := a.repo.CreateComment(newComment)
 	if err != nil {
@@ -276,10 +271,41 @@ func (a *Service) GetCommentsOfGist(ctx context.Context, request GetGistRequest)
 	return &gists, err
 }
 
-func (a *Service) DeleteComment() {
+func (a *Service) DeleteComment(ctx context.Context, request DeleteRequest) error {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUser request err: %v", err)
+	}
 
+	if user.ID != request.UserID {
+		return fmt.Errorf("it is not your comment err: %v", err)
+	}
+
+	err = a.repo.DeleteComment(request.CommentID)
+	if err != nil {
+		return fmt.Errorf("delete comment err: %v", err)
+	}
+	return nil
 }
 
-func (a *Service) UpdateComment() {
+func (a *Service) UpdateComment(ctx context.Context, request UpdateCommentRequest) error {
+	user, err := a.userTransport.GetUser(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUser request err: %v", err)
+	}
 
+	if user.ID != request.UserID {
+		return fmt.Errorf("it is not your comment err: %v", err)
+	}
+
+	updatedComment := entity.Comment{
+		ID:   request.CommentID,
+		Text: request.Text,
+	}
+
+	err = a.repo.UpdateComment(updatedComment)
+	if err != nil {
+		return fmt.Errorf("update comment err: %v", err)
+	}
+	return nil
 }
