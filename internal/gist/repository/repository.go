@@ -6,6 +6,7 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 )
 
+//go:generate mockgen -source=repository.go -destination=mocks/mock.go
 type Repository interface {
 	GistRepository
 	ForkRepository
