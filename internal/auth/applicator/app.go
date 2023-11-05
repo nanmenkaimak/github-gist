@@ -4,10 +4,13 @@ import (
 	"context"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
+	"github.com/nanmenkaimak/github-gist/internal/auth/controller/consumer"
 	http2 "github.com/nanmenkaimak/github-gist/internal/auth/controller/http"
 	"github.com/nanmenkaimak/github-gist/internal/auth/database/dbpostgres"
+	"github.com/nanmenkaimak/github-gist/internal/auth/database/dbredis"
 	"github.com/nanmenkaimak/github-gist/internal/auth/repository"
 	"github.com/nanmenkaimak/github-gist/internal/auth/transport"
+	"github.com/nanmenkaimak/github-gist/internal/kafka"
 	"go.uber.org/zap"
 	"net/http"
 	"os"
@@ -55,13 +58,32 @@ func (a *App) Run() {
 		}
 	}()
 
+	dbRedis, err := dbredis.New()
+	if err != nil {
+		l.Fatalf("cannot connect to redis")
+	}
+
+	userVerificationProducer, err := kafka.NewProducer(cfg.Kafka)
+	if err != nil {
+		l.Panicf("failed NewProducer err: %v", err)
+	}
+
+	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l)
+
+	userVerificationConsumer, err := kafka.NewConsumer(l, cfg.Kafka, userVerificationConsumerCallback)
+	if err != nil {
+		l.Panicf("failed NewConsumer err: %v", err)
+	}
+
+	go userVerificationConsumer.Start()
+
 	repo := repository.NewRepository(mainDB, replicaDB)
 
 	client := &http.Client{}
 
 	userTransport := transport.NewTransport(cfg.Transport.User, client)
 
-	authService := auth.NewAuthService(repo, cfg.Auth, userTransport)
+	authService := auth.NewAuthService(repo, cfg.Auth, userTransport, userVerificationProducer, dbRedis)
 
 	endpointHandler := http2.NewEndpointHandler(authService, l)
 

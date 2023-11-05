@@ -29,6 +29,8 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 	{
 		auth.POST("/login", eh.Login)
 		auth.POST("/renew-token", eh.RenewToken)
+		auth.POST("/register", eh.Register)
+		auth.POST("/confirm-user", eh.ConfirmUser)
 	}
 
 	return r

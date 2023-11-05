@@ -23,3 +23,8 @@ type MyCustomClaims struct {
 	UserId uuid.UUID `json:"user_id"`
 	jwt.RegisteredClaims
 }
+
+type ConfirmUserRequest struct {
+	Email string
+	Code  string
+}

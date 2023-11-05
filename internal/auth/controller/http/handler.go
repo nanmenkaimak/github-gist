@@ -21,6 +21,39 @@ func NewEndpointHandler(authService auth.UseCase, logger *zap.SugaredLogger) *En
 	}
 }
 
+func (f *EndpointHandler) Register(ctx *gin.Context) {
+	// make register user
+	err := f.authService.RegisterUser(ctx.Request.Context())
+	if err != nil {
+		f.logger.Errorf("failed to Register err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (f *EndpointHandler) ConfirmUser(ctx *gin.Context) {
+	request := struct {
+		Code  string `json:"code"`
+		Email string `json:"email"`
+	}{}
+	if err := ctx.BindJSON(&request); err != nil {
+		f.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	confirmRequest := auth.ConfirmUserRequest{
+		Code:  request.Code,
+		Email: request.Email,
+	}
+	err := f.authService.ConfirmUser(ctx.Request.Context(), confirmRequest)
+	if err != nil {
+		f.logger.Errorf("failed to ConfirmUser err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.JSON(http.StatusOK, "norm")
+}
+
 func (f *EndpointHandler) Login(ctx *gin.Context) {
 	request := struct {
 		Username string `json:"username"`

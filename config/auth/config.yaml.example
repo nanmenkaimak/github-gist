@@ -22,3 +22,11 @@ Transport:
   User:
     Host: http://127.0.0.1:8081
     Timeout: 5s
+Kafka:
+  Brokers:
+    -
+  Producer:
+    topic:
+  Consumer:
+    topics:
+      -
