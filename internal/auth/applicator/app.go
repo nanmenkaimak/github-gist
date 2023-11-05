@@ -68,7 +68,7 @@ func (a *App) Run() {
 		l.Panicf("failed NewProducer err: %v", err)
 	}
 
-	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l)
+	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l, dbRedis)
 
 	userVerificationConsumer, err := kafka.NewConsumer(l, cfg.Kafka, userVerificationConsumerCallback)
 	if err != nil {

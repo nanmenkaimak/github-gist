@@ -147,7 +147,8 @@ func (a *Service) RegisterUser(ctx context.Context) error {
 	randNum4 := rand.Intn(10)
 
 	msg := dto.UserCode{
-		Code: fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
+		Code:  fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
+		Email: "aristanovali618@gmail.com",
 	}
 
 	b, err := json.Marshal(&msg)
@@ -156,12 +157,6 @@ func (a *Service) RegisterUser(ctx context.Context) error {
 	}
 
 	a.userVerificationProducer.ProduceMessage(b)
-
-	// to database
-	err = a.dbRedis.Set(ctx, "aristanovali618@gmail.com", b, 1*time.Minute).Err()
-	if err != nil {
-		return fmt.Errorf("redis set err: %v", err)
-	}
 
 	return nil
 }
@@ -172,13 +167,8 @@ func (a *Service) ConfirmUser(ctx context.Context, request ConfirmUserRequest) e
 	if err != nil {
 		return fmt.Errorf("redis get err: %v", err)
 	}
-	var code dto.UserCode
-	err = json.Unmarshal([]byte(res), &code)
-	if err != nil {
-		return fmt.Errorf("failed to Unmarshal UserCode err: %v", err)
-	}
-	fmt.Println(code, request.Code)
-	if code.Code != request.Code {
+
+	if res != request.Code {
 		return fmt.Errorf("wrong confirm code")
 	}
 	// if ok update user confirmed by grpc
