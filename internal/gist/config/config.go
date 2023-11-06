@@ -33,10 +33,8 @@ type Auth struct {
 }
 
 type Transport struct {
-	User UserTransport `yaml:"User"`
+	UserGrpc UserGrpcTransport `yaml:"userGrpc"`
 }
-
-type UserTransport struct {
-	Host    string        `yaml:"Host"`
-	Timeout time.Duration `yaml:"Timeout"`
+type UserGrpcTransport struct {
+	Host string `yaml:"host"`
 }

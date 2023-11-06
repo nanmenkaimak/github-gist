@@ -11,7 +11,6 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/gist/repository"
 	"github.com/nanmenkaimak/github-gist/internal/gist/transport"
 	"go.uber.org/zap"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -61,11 +60,9 @@ func (a *App) Run() {
 
 	authService := auth.NewService(cfg.Auth)
 
-	client := &http.Client{}
+	userGrpcTransport := transport.NewUserGrpcTransport(cfg.Transport.UserGrpc)
 
-	userTransport := transport.NewTransport(cfg.Transport.User, client)
-
-	gistService := gist.NewGistService(repo, userTransport)
+	gistService := gist.NewGistService(repo, userGrpcTransport)
 
 	authMiddleware := middleware.NewJwtV1Middleware(authService, l)
 

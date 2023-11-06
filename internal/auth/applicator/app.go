@@ -12,7 +12,6 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/auth/transport"
 	"github.com/nanmenkaimak/github-gist/internal/kafka"
 	"go.uber.org/zap"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -79,11 +78,9 @@ func (a *App) Run() {
 
 	repo := repository.NewRepository(mainDB, replicaDB)
 
-	client := &http.Client{}
+	userGrpcTransport := transport.NewUserGrpcTransport(cfg.Transport.UserGrpc)
 
-	userTransport := transport.NewTransport(cfg.Transport.User, client)
-
-	authService := auth.NewAuthService(repo, cfg.Auth, userTransport, userVerificationProducer, dbRedis)
+	authService := auth.NewAuthService(repo, cfg.Auth, userVerificationProducer, dbRedis, userGrpcTransport)
 
 	endpointHandler := http2.NewEndpointHandler(authService, l)
 

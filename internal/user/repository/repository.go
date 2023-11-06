@@ -1,12 +1,18 @@
 package repository
 
-import "github.com/nanmenkaimak/github-gist/internal/user/database/dbpostgres"
+import (
+	"github.com/google/uuid"
+	"github.com/nanmenkaimak/github-gist/internal/user/database/dbpostgres"
+	"github.com/nanmenkaimak/github-gist/internal/user/entity"
+)
 
 type Repository interface {
 	UserRepository
 }
 
 type UserRepository interface {
+	CreateUser(newUser entity.User) (uuid.UUID, error)
+	GetUserByUsername(username string) (*entity.User, error)
 }
 
 type Repo struct {

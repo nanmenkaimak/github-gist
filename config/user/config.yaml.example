@@ -1,6 +1,5 @@
-HttpServer:
-  Port: 8082
-  ShutdownTimeout: 2m
+GrpcServer:
+  Port:
 Database:
   Main:
     Host: '127.0.0.1'

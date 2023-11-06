@@ -10,14 +10,14 @@ import (
 )
 
 type Service struct {
-	repo          repository.Repository
-	userTransport *transport.UserTransport
+	repo              repository.Repository
+	userGrpcTransport *transport.UserGrpcTransport
 }
 
-func NewGistService(repo repository.Repository, userTransport *transport.UserTransport) UseCase {
+func NewGistService(repo repository.Repository, userGrpcTransport *transport.UserGrpcTransport) UseCase {
 	return &Service{
-		repo:          repo,
-		userTransport: userTransport,
+		repo:              repo,
+		userGrpcTransport: userGrpcTransport,
 	}
 }
 
@@ -50,12 +50,18 @@ func (a *Service) GetAllGists(ctx context.Context, request GetAllGistsRequest) (
 }
 
 func (a *Service) GetGistByID(ctx context.Context, request GetGistRequest) (*entity.GistRequest, error) {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %v", err)
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
+
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse uuid err: %v", err)
+	}
+
 	ownGist := false
-	if user.ID == request.UserID {
+	if userID == request.UserID {
 		ownGist = true
 	}
 	gist, err := a.repo.GetGistByID(request.GistID, ownGist)
@@ -71,16 +77,22 @@ func (a *Service) GetGistByID(ctx context.Context, request GetGistRequest) (*ent
 }
 
 func (a *Service) GetAllGistsOfUser(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error) {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %v", err)
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
+
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse uuid err: %v", err)
+	}
+
 	ownGist := false
-	if user.ID == request.UserID {
+	if userID == request.UserID {
 		ownGist = true
 	}
 
-	gists, err := a.repo.GetAllGistsOfUser(user.ID, ownGist, request.Searching)
+	gists, err := a.repo.GetAllGistsOfUser(userID, ownGist, request.Searching)
 	if err != nil {
 		return nil, fmt.Errorf("getting all gists of user err: %v", err)
 	}
@@ -89,12 +101,17 @@ func (a *Service) GetAllGistsOfUser(ctx context.Context, request GetGistRequest)
 }
 
 func (a *Service) GetGistsByVisibility(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error) {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %v", err)
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	if user.ID != request.UserID {
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	if userID != request.UserID {
 		return nil, fmt.Errorf("different user err: %v", err)
 	}
 
@@ -107,12 +124,17 @@ func (a *Service) GetGistsByVisibility(ctx context.Context, request GetGistReque
 }
 
 func (a *Service) UpdateGistByID(ctx context.Context, request UpdateGistRequest) error {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return fmt.Errorf("GetUser request err: %v", err)
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	if user.ID != request.UserID {
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	if userID != request.UserID {
 		return fmt.Errorf("it is not your gist err: %v", err)
 	}
 
@@ -124,12 +146,17 @@ func (a *Service) UpdateGistByID(ctx context.Context, request UpdateGistRequest)
 }
 
 func (a *Service) DeleteGistByID(ctx context.Context, request GetGistRequest) error {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return fmt.Errorf("GetUser request err: %v", err)
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	if user.ID != request.UserID {
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	if userID != request.UserID {
 		return fmt.Errorf("it is not your gist err: %v", err)
 	}
 
@@ -149,12 +176,17 @@ func (a *Service) StarGist(ctx context.Context, request entity.Star) error {
 }
 
 func (a *Service) GetStaredGists(ctx context.Context, request OtherGistRequest) (*[]entity.GistRequest, error) {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %v", err)
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	gists, err := a.repo.GetStarredGists(user.ID)
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	gists, err := a.repo.GetStarredGists(userID)
 	if err != nil {
 		return nil, fmt.Errorf("getting starred gists err: %v", err)
 	}
@@ -163,12 +195,17 @@ func (a *Service) GetStaredGists(ctx context.Context, request OtherGistRequest) 
 }
 
 func (a *Service) DeleteStar(ctx context.Context, request DeleteRequest) error {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return fmt.Errorf("GetUser request err: %v", err)
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	if user.ID != request.UserID {
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	if userID != request.UserID {
 		return fmt.Errorf("it is not your gist err: %v", err)
 	}
 
@@ -180,12 +217,17 @@ func (a *Service) DeleteStar(ctx context.Context, request DeleteRequest) error {
 }
 
 func (a *Service) ForkGist(ctx context.Context, request ForkRequest) (*ForkGistResponse, error) {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %v", err)
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	if user.ID != request.UserID {
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	if userID != request.UserID {
 		return nil, fmt.Errorf("it is not your gist err: %v", err)
 	}
 
@@ -237,17 +279,22 @@ func (a *Service) ForkGist(ctx context.Context, request ForkRequest) (*ForkGistR
 }
 
 func (a *Service) GetForkedGists(ctx context.Context, request GetGistRequest) (*[]entity.GistRequest, error) {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %v", err)
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse uuid err: %v", err)
 	}
 
 	ownGist := false
-	if user.ID == request.UserID {
+	if userID == request.UserID {
 		ownGist = true
 	}
 
-	gists, err := a.repo.GetForkedGistByUser(user.ID, ownGist)
+	gists, err := a.repo.GetForkedGistByUser(userID, ownGist)
 	if err != nil {
 		return nil, fmt.Errorf("getting forked gists err: %v", err)
 	}
@@ -272,12 +319,17 @@ func (a *Service) GetCommentsOfGist(ctx context.Context, request GetGistRequest)
 }
 
 func (a *Service) DeleteComment(ctx context.Context, request DeleteRequest) error {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return fmt.Errorf("GetUser request err: %v", err)
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	if user.ID != request.UserID {
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	if userID != request.UserID {
 		return fmt.Errorf("it is not your comment err: %v", err)
 	}
 
@@ -289,12 +341,17 @@ func (a *Service) DeleteComment(ctx context.Context, request DeleteRequest) erro
 }
 
 func (a *Service) UpdateComment(ctx context.Context, request UpdateCommentRequest) error {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return fmt.Errorf("GetUser request err: %v", err)
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	if user.ID != request.UserID {
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return fmt.Errorf("parse uuid err: %v", err)
+	}
+
+	if userID != request.UserID {
 		return fmt.Errorf("it is not your comment err: %v", err)
 	}
 

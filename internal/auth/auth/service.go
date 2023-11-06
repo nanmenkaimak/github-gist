@@ -21,27 +21,27 @@ import (
 
 type Service struct {
 	repo                     repository.Repository
-	userTransport            *transport.UserTransport
+	userGrpcTransport        *transport.UserGrpcTransport
 	jwtSecretKey             string
 	userVerificationProducer *kafka.Producer
 	dbRedis                  *redis.Client
 }
 
-func NewAuthService(repo repository.Repository, authConfig config.Auth,
-	userTransport *transport.UserTransport, userVerificationProducer *kafka.Producer, dbRedis *redis.Client) UseCase {
+func NewAuthService(repo repository.Repository, authConfig config.Auth, userVerificationProducer *kafka.Producer,
+	dbRedis *redis.Client, userGrpcTransport *transport.UserGrpcTransport) UseCase {
 	return &Service{
 		repo:                     repo,
-		userTransport:            userTransport,
 		jwtSecretKey:             authConfig.JwtSecretKey,
 		userVerificationProducer: userVerificationProducer,
 		dbRedis:                  dbRedis,
+		userGrpcTransport:        userGrpcTransport,
 	}
 }
 
 func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenRequest) (*JwtUserToken, error) {
-	user, err := a.userTransport.GetUser(ctx, request.Username)
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
 	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %v", err)
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
 	err = a.comparePassword(user.Password, request.Password)
@@ -49,8 +49,13 @@ func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 		return nil, fmt.Errorf("comparePassword err: %v", err)
 	}
 
+	userID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse uuid err: %v", err)
+	}
+
 	claims := MyCustomClaims{
-		user.ID,
+		userID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -66,7 +71,7 @@ func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 	}
 
 	rClaims := MyCustomClaims{
-		user.ID,
+		userID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(40 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -81,7 +86,7 @@ func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 	}
 
 	userToken := entitiy.UserToken{
-		UserID:       user.ID,
+		UserID:       userID,
 		Token:        tokenString,
 		RefreshToken: refreshTokenString,
 	}
