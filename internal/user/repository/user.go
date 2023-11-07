@@ -22,3 +22,8 @@ func (r *Repo) GetUserByUsername(username string) (*entity.User, error) {
 	}
 	return &userByUsername, err
 }
+
+func (r *Repo) ConfirmUser(email string) error {
+	err := r.main.Db.Model(&entity.User{}).Where("email = ?", email).Update("is_confirmed", true).Error
+	return err
+}

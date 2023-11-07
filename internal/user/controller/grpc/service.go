@@ -61,3 +61,13 @@ func (s *Service) GetUserByUsername(ctx context.Context, request *pb.GetUserByUs
 		},
 	}, nil
 }
+
+func (s *Service) ConfirmUser(ctx context.Context, request *pb.ConfirmUserRequest) (*pb.ConfirmUserResponse, error) {
+	err := s.repo.ConfirmUser(request.GetEmail())
+	if err != nil {
+		s.logger.Errorf("failed to ConfirmUser err: %v", err)
+		return nil, fmt.Errorf("ConfirmUser err: %w", err)
+	}
+
+	return &pb.ConfirmUserResponse{}, nil
+}

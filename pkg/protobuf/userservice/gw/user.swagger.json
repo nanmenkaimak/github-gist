@@ -119,6 +119,9 @@
         }
       }
     },
+    "userserviceConfirmUserResponse": {
+      "type": "object"
+    },
     "userserviceCreateUserRequest": {
       "type": "object",
       "properties": {

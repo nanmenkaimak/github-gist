@@ -28,3 +28,7 @@ type ConfirmUserRequest struct {
 	Email string
 	Code  string
 }
+
+type RegisterUserResponse struct {
+	ID uuid.UUID
+}

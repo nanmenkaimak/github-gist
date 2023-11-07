@@ -143,8 +143,27 @@ func (a *Service) RenewToken(ctx context.Context, refreshToken string) (*JwtRene
 	return jwtToken, nil
 }
 
-func (a *Service) RegisterUser(ctx context.Context) error {
+func (a *Service) RegisterUser(ctx context.Context, request entitiy.RegisterUserRequest) (*RegisterUserResponse, error) {
 	// user create by grpc
+	hashPass, err := a.hashPassword(request.Password)
+	if err != nil {
+		return nil, fmt.Errorf("hashing password err: %v", err)
+	}
+
+	request.Password = hashPass
+	response, err := a.userGrpcTransport.CreateUser(ctx, request)
+	if err != nil {
+		return nil, fmt.Errorf("CreateUser request err: %v", err)
+	}
+
+	userID, err := uuid.Parse(response.GetId())
+	if err != nil {
+		return nil, fmt.Errorf("converting id to uuid err; %v", err)
+	}
+
+	resp := &RegisterUserResponse{
+		ID: userID,
+	}
 
 	randNum1 := rand.Intn(10)
 	randNum2 := rand.Intn(10)
@@ -153,17 +172,17 @@ func (a *Service) RegisterUser(ctx context.Context) error {
 
 	msg := dto.UserCode{
 		Code:  fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
-		Email: "aristanovali618@gmail.com",
+		Email: request.Email,
 	}
 
 	b, err := json.Marshal(&msg)
 	if err != nil {
-		return fmt.Errorf("failed to marshall UserCode err: %w", err)
+		return resp, fmt.Errorf("failed to marshall UserCode err: %w", err)
 	}
 
 	a.userVerificationProducer.ProduceMessage(b)
 
-	return nil
+	return resp, nil
 }
 
 func (a *Service) ConfirmUser(ctx context.Context, request ConfirmUserRequest) error {
@@ -177,6 +196,10 @@ func (a *Service) ConfirmUser(ctx context.Context, request ConfirmUserRequest) e
 		return fmt.Errorf("wrong confirm code")
 	}
 	// if ok update user confirmed by grpc
+	_, err = a.userGrpcTransport.ConfirmUser(ctx, request.Email)
+	if err != nil {
+		fmt.Errorf("ConfirmUser request err: %v", err)
+	}
 	return nil
 }
 

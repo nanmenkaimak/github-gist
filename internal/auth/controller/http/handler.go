@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 	"go.uber.org/zap"
 	"net/http"
 	"unicode"
@@ -22,13 +23,20 @@ func NewEndpointHandler(authService auth.UseCase, logger *zap.SugaredLogger) *En
 }
 
 func (f *EndpointHandler) Register(ctx *gin.Context) {
+	var request entitiy.RegisterUserRequest
+	if err := ctx.BindJSON(&request); err != nil {
+		f.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
 	// make register user
-	err := f.authService.RegisterUser(ctx.Request.Context())
+	userID, err := f.authService.RegisterUser(ctx.Request.Context(), request)
 	if err != nil {
 		f.logger.Errorf("failed to Register err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
 		return
 	}
+	ctx.JSON(http.StatusCreated, userID)
 }
 
 func (f *EndpointHandler) ConfirmUser(ctx *gin.Context) {
@@ -51,7 +59,7 @@ func (f *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	ctx.JSON(http.StatusOK, "norm")
+	ctx.Status(http.StatusNoContent)
 }
 
 func (f *EndpointHandler) Login(ctx *gin.Context) {

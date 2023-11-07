@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 	pb "github.com/nanmenkaimak/github-gist/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -40,4 +41,32 @@ func (t *UserGrpcTransport) GetUserByUsername(ctx context.Context, username stri
 	}
 
 	return resp.Result, nil
+}
+
+func (t *UserGrpcTransport) CreateUser(ctx context.Context, newUser entitiy.RegisterUserRequest) (*pb.CreateUserResponse, error) {
+	resp, err := t.client.CreateUser(ctx, &pb.CreateUserRequest{
+		User: &pb.User{
+			FirstName:   newUser.FirstName,
+			LastName:    newUser.LastName,
+			Username:    newUser.Username,
+			Email:       newUser.Email,
+			Password:    newUser.Password,
+			IsConfirmed: newUser.IsConfirmed,
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot CreateUser: %w", err)
+	}
+	return resp, nil
+}
+
+func (t *UserGrpcTransport) ConfirmUser(ctx context.Context, email string) (*pb.ConfirmUserResponse, error) {
+	resp, err := t.client.ConfirmUser(ctx, &pb.ConfirmUserRequest{
+		Email: email,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot ConfirmUser: %w", err)
+	}
+	return resp, nil
 }
