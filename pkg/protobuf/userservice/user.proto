@@ -8,6 +8,7 @@ service UserService {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
   rpc GetUserByUsername(GetUserByUsernameRequest) returns (GetUserByUsernameResponse) {}
   rpc ConfirmUser(ConfirmUserRequest) returns (ConfirmUserResponse) {}
+  rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse) {}
 }
 
 message CreateUserRequest {
@@ -31,6 +32,14 @@ message ConfirmUserRequest {
 }
 
 message ConfirmUserResponse {}
+
+message GetUserByIDRequest {
+  string id = 1;
+}
+
+message GetUserByIDResponse {
+  User user = 1;
+}
 
 message User {
   string id = 1;

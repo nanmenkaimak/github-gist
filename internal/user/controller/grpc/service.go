@@ -71,3 +71,22 @@ func (s *Service) ConfirmUser(ctx context.Context, request *pb.ConfirmUserReques
 
 	return &pb.ConfirmUserResponse{}, nil
 }
+
+func (s *Service) GetUserByID(ctx context.Context, request *pb.GetUserByIDRequest) (*pb.GetUserByIDResponse, error) {
+	user, err := s.repo.GetUserByID(request.GetId())
+	if err != nil {
+		s.logger.Errorf("failed to GetUserByID err: %v", err)
+		return nil, fmt.Errorf("GetUserByID err: %v", err)
+	}
+	return &pb.GetUserByIDResponse{
+		User: &pb.User{
+			Id:          user.ID.String(),
+			FirstName:   user.FirstName,
+			LastName:    user.LastName,
+			Username:    user.Username,
+			Email:       user.Email,
+			Password:    user.Password,
+			IsConfirmed: user.IsConfirmed,
+		},
+	}, nil
+}

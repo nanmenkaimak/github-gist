@@ -41,3 +41,18 @@ func (t *UserGrpcTransport) GetUserByUsername(ctx context.Context, username stri
 
 	return resp.Result, nil
 }
+
+func (t *UserGrpcTransport) GetUserByID(ctx context.Context, userID string) (*pb.User, error) {
+	resp, err := t.client.GetUserByID(ctx, &pb.GetUserByIDRequest{
+		Id: userID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot GetUserByID: %w", err)
+	}
+
+	if resp == nil {
+		return nil, fmt.Errorf("not found")
+	}
+
+	return resp.User, nil
+}

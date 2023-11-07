@@ -14,6 +14,7 @@ type UserRepository interface {
 	CreateUser(newUser entity.User) (uuid.UUID, error)
 	GetUserByUsername(username string) (*entity.User, error)
 	ConfirmUser(email string) error
+	GetUserByID(userID string) (*entity.User, error)
 }
 
 type Repo struct {

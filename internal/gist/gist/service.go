@@ -303,7 +303,12 @@ func (a *Service) GetForkedGists(ctx context.Context, request GetGistRequest) (*
 }
 
 func (a *Service) CreateComment(ctx context.Context, newComment entity.Comment) error {
-	err := a.repo.CreateComment(newComment)
+	user, err := a.userGrpcTransport.GetUserByID(ctx, newComment.UserID.String())
+	if err != nil {
+		return fmt.Errorf("GetUserByID request err: %v", err)
+	}
+	newComment.Username = user.Username
+	err = a.repo.CreateComment(newComment)
 	if err != nil {
 		return err
 	}

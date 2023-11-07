@@ -27,3 +27,13 @@ func (r *Repo) ConfirmUser(email string) error {
 	err := r.main.Db.Model(&entity.User{}).Where("email = ?", email).Update("is_confirmed", true).Error
 	return err
 }
+
+func (r *Repo) GetUserByID(userID string) (*entity.User, error) {
+	var userByID entity.User
+
+	err := r.replica.Db.Where("id = ?", userID).Find(&userByID).Error
+	if err != nil {
+		return nil, err
+	}
+	return &userByID, err
+}
