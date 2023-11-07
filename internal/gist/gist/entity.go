@@ -55,3 +55,9 @@ type UpdateCommentRequest struct {
 	UserID    uuid.UUID
 	Text      string
 }
+
+type FollowRequest struct {
+	FollowerID  uuid.UUID
+	FollowingID uuid.UUID
+	Username    string
+}

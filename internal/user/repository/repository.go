@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	UserRepository
+	FollowRepository
 }
 
 type UserRepository interface {
@@ -15,6 +16,11 @@ type UserRepository interface {
 	GetUserByUsername(username string) (*entity.User, error)
 	ConfirmUser(email string) error
 	GetUserByID(userID string) (*entity.User, error)
+}
+
+type FollowRepository interface {
+	FollowUser(follower entity.Follower) error
+	UnfollowUser(follower entity.Follower) error
 }
 
 type Repo struct {

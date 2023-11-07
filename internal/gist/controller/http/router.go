@@ -51,6 +51,9 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		gist.GET("/:username/:gist_id/comment", eh.GetCommentsOfGist)
 		gist.DELETE("/:username/:gist_id/comment/:comment_id", eh.DeleteComment)
 		gist.PATCH("/:username/:gist_id/comment/:comment_id", eh.UpdateComment)
+
+		gist.POST("/:username/follow", eh.FollowUser)
+		gist.POST("/:username/unfollow", eh.UnfollowUser)
 	}
 
 	return r

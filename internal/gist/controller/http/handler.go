@@ -490,3 +490,49 @@ func (h *EndpointHandler) UpdateComment(ctx *gin.Context) {
 	}
 	ctx.Status(http.StatusNoContent)
 }
+
+func (h *EndpointHandler) FollowUser(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	username := ctx.Param("username")
+
+	request := gist.FollowRequest{
+		FollowerID: userID.ID,
+		Username:   username,
+	}
+
+	err = h.gistService.FollowUser(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to FollowUser err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusCreated)
+}
+
+func (h *EndpointHandler) UnfollowUser(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		h.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	username := ctx.Param("username")
+
+	request := gist.FollowRequest{
+		FollowerID: userID.ID,
+		Username:   username,
+	}
+
+	err = h.gistService.UnfollowUser(ctx.Request.Context(), request)
+	if err != nil {
+		h.logger.Errorf("failed to UnfollowUser err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ctx.Status(http.StatusCreated)
+}

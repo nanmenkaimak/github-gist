@@ -56,3 +56,25 @@ func (t *UserGrpcTransport) GetUserByID(ctx context.Context, userID string) (*pb
 
 	return resp.User, nil
 }
+
+func (t *UserGrpcTransport) FollowUser(ctx context.Context, followerID string, followingID string) (*pb.FollowUserResponse, error) {
+	resp, err := t.client.FollowUser(ctx, &pb.FollowUserRequest{
+		FollowerId:  followerID,
+		FollowingId: followingID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot FollowUser: %w", err)
+	}
+	return resp, nil
+}
+
+func (t *UserGrpcTransport) UnfollowUser(ctx context.Context, followerID string, followingID string) (*pb.UnfollowUserResponse, error) {
+	resp, err := t.client.UnfollowUser(ctx, &pb.UnfollowUserRequest{
+		FollowerId:  followerID,
+		FollowingId: followingID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot FollowUser: %w", err)
+	}
+	return resp, nil
+}

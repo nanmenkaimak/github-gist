@@ -371,3 +371,43 @@ func (a *Service) UpdateComment(ctx context.Context, request UpdateCommentReques
 	}
 	return nil
 }
+
+func (a *Service) FollowUser(ctx context.Context, request FollowRequest) error {
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+
+	followingID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return fmt.Errorf("converting string to uuid err: %v", err)
+	}
+
+	request.FollowingID = followingID
+
+	_, err = a.userGrpcTransport.FollowUser(ctx, request.FollowerID.String(), request.FollowingID.String())
+	if err != nil {
+		return fmt.Errorf("FollowUser request err: %v", err)
+	}
+	return nil
+}
+
+func (a *Service) UnfollowUser(ctx context.Context, request FollowRequest) error {
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+
+	followingID, err := uuid.Parse(user.Id)
+	if err != nil {
+		return fmt.Errorf("converting string to uuid err: %v", err)
+	}
+
+	request.FollowingID = followingID
+
+	_, err = a.userGrpcTransport.UnfollowUser(ctx, request.FollowerID.String(), request.FollowingID.String())
+	if err != nil {
+		return fmt.Errorf("FollowUser request err: %v", err)
+	}
+	return nil
+}

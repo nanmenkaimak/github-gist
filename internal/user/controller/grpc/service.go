@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/user/entity"
 	"github.com/nanmenkaimak/github-gist/internal/user/repository"
 	pb "github.com/nanmenkaimak/github-gist/pkg/protobuf/userservice/gw"
@@ -89,4 +90,48 @@ func (s *Service) GetUserByID(ctx context.Context, request *pb.GetUserByIDReques
 			IsConfirmed: user.IsConfirmed,
 		},
 	}, nil
+}
+
+func (s *Service) FollowUser(ctx context.Context, request *pb.FollowUserRequest) (*pb.FollowUserResponse, error) {
+	followingID, err := uuid.Parse(request.FollowingId)
+	if err != nil {
+		return nil, fmt.Errorf("converting string to uuid err: %v", err)
+	}
+	followerID, err := uuid.Parse(request.FollowerId)
+	if err != nil {
+		return nil, fmt.Errorf("converting string to uuid err: %v", err)
+	}
+	newFollow := entity.Follower{
+		FollowerID:  followerID,
+		FollowingID: followingID,
+	}
+	err = s.repo.FollowUser(newFollow)
+	if err != nil {
+		s.logger.Errorf("failed to FollowUser err: %v", err)
+		return nil, fmt.Errorf("FollowUser err: %v", err)
+	}
+
+	return &pb.FollowUserResponse{}, nil
+}
+
+func (s *Service) UnfollowUser(ctx context.Context, request *pb.UnfollowUserRequest) (*pb.UnfollowUserResponse, error) {
+	followingID, err := uuid.Parse(request.FollowingId)
+	if err != nil {
+		return nil, fmt.Errorf("converting string to uuid err: %v", err)
+	}
+	followerID, err := uuid.Parse(request.FollowerId)
+	if err != nil {
+		return nil, fmt.Errorf("converting string to uuid err: %v", err)
+	}
+	newUnfollow := entity.Follower{
+		FollowerID:  followerID,
+		FollowingID: followingID,
+	}
+	err = s.repo.UnfollowUser(newUnfollow)
+	if err != nil {
+		s.logger.Errorf("failed to UnfollowUser err: %v", err)
+		return nil, fmt.Errorf("UnfollowUser err: %v", err)
+	}
+
+	return &pb.UnfollowUserResponse{}, nil
 }

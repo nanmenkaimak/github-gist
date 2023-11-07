@@ -9,6 +9,8 @@ service UserService {
   rpc GetUserByUsername(GetUserByUsernameRequest) returns (GetUserByUsernameResponse) {}
   rpc ConfirmUser(ConfirmUserRequest) returns (ConfirmUserResponse) {}
   rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse) {}
+  rpc FollowUser(FollowUserRequest) returns (FollowUserResponse) {}
+  rpc UnfollowUser(UnfollowUserRequest) returns (UnfollowUserResponse) {}
 }
 
 message CreateUserRequest {
@@ -40,6 +42,20 @@ message GetUserByIDRequest {
 message GetUserByIDResponse {
   User user = 1;
 }
+
+message FollowUserRequest {
+  string follower_id = 1;
+  string following_id = 2;
+}
+
+message FollowUserResponse {}
+
+message UnfollowUserRequest {
+  string follower_id = 1;
+  string following_id = 2;
+}
+
+message UnfollowUserResponse {}
 
 message User {
   string id = 1;

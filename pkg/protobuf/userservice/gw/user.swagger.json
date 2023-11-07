@@ -138,6 +138,9 @@
         }
       }
     },
+    "userserviceFollowUserResponse": {
+      "type": "object"
+    },
     "userserviceGetUserByIDResponse": {
       "type": "object",
       "properties": {
@@ -161,6 +164,9 @@
           "$ref": "#/definitions/userserviceUser"
         }
       }
+    },
+    "userserviceUnfollowUserResponse": {
+      "type": "object"
     },
     "userserviceUser": {
       "type": "object",
