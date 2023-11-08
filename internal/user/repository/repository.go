@@ -21,6 +21,8 @@ type UserRepository interface {
 type FollowRepository interface {
 	FollowUser(follower entity.Follower) error
 	UnfollowUser(follower entity.Follower) error
+	GetAllFollowers(userID string) ([]entity.User, error)
+	GetAllFollowings(userID string) ([]entity.User, error)
 }
 
 type Repo struct {

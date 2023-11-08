@@ -11,6 +11,8 @@ service UserService {
   rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse) {}
   rpc FollowUser(FollowUserRequest) returns (FollowUserResponse) {}
   rpc UnfollowUser(UnfollowUserRequest) returns (UnfollowUserResponse) {}
+  rpc GetAllFollowers(GetAllFollowersRequest) returns (GetAllFollowersResponse) {}
+  rpc GetAllFollowings(GetAllFollowingsRequest) returns (GetAllFollowingsResponse) {}
 }
 
 message CreateUserRequest {
@@ -56,6 +58,22 @@ message UnfollowUserRequest {
 }
 
 message UnfollowUserResponse {}
+
+message GetAllFollowersRequest {
+  string user_id = 1;
+}
+
+message GetAllFollowersResponse {
+  repeated User followers = 1;
+}
+
+message GetAllFollowingsRequest {
+  string user_id = 1;
+}
+
+message GetAllFollowingsResponse {
+  repeated User followings = 1;
+}
 
 message User {
   string id = 1;

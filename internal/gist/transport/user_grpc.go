@@ -78,3 +78,24 @@ func (t *UserGrpcTransport) UnfollowUser(ctx context.Context, followerID string,
 	}
 	return resp, nil
 }
+
+func (t *UserGrpcTransport) GetAllFollowers(ctx context.Context, userID string) (*pb.GetAllFollowersResponse, error) {
+	resp, err := t.client.GetAllFollowers(ctx, &pb.GetAllFollowersRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot GetAllFollowers: %w", err)
+	}
+
+	return resp, nil
+}
+
+func (t *UserGrpcTransport) GetAllFollowings(ctx context.Context, userID string) (*pb.GetAllFollowingsResponse, error) {
+	resp, err := t.client.GetAllFollowings(ctx, &pb.GetAllFollowingsRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot GetAllFollowings: %w", err)
+	}
+	return resp, nil
+}

@@ -411,3 +411,63 @@ func (a *Service) UnfollowUser(ctx context.Context, request FollowRequest) error
 	}
 	return nil
 }
+
+func (a *Service) GetAllFollowers(ctx context.Context, username string) (*[]UserResponse, error) {
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+
+	resp, err := a.userGrpcTransport.GetAllFollowers(ctx, user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("GetAllFollowers request err: %v", err)
+	}
+
+	var responseUser []UserResponse
+
+	for i := 0; i < len(resp.Followers); i++ {
+		user := UserResponse{
+			ID:          resp.Followers[i].Id,
+			FirstName:   resp.Followers[i].FirstName,
+			LastName:    resp.Followers[i].LastName,
+			Username:    resp.Followers[i].Username,
+			Email:       resp.Followers[i].Email,
+			Password:    resp.Followers[i].Password,
+			IsConfirmed: resp.Followers[i].IsConfirmed,
+		}
+
+		responseUser = append(responseUser, user)
+	}
+
+	return &responseUser, nil
+}
+
+func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]UserResponse, error) {
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+
+	resp, err := a.userGrpcTransport.GetAllFollowings(ctx, user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("GetAllFollowings request err: %v", err)
+	}
+
+	var responseUser []UserResponse
+
+	for i := 0; i < len(resp.Followings); i++ {
+		user := UserResponse{
+			ID:          resp.Followings[i].Id,
+			FirstName:   resp.Followings[i].FirstName,
+			LastName:    resp.Followings[i].LastName,
+			Username:    resp.Followings[i].Username,
+			Email:       resp.Followings[i].Email,
+			Password:    resp.Followings[i].Password,
+			IsConfirmed: resp.Followings[i].IsConfirmed,
+		}
+
+		responseUser = append(responseUser, user)
+	}
+
+	return &responseUser, nil
+}

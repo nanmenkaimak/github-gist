@@ -54,6 +54,7 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 		gist.POST("/:username/follow", eh.FollowUser)
 		gist.POST("/:username/unfollow", eh.UnfollowUser)
+		gist.GET("/:username", eh.UserInfo)
 	}
 
 	return r

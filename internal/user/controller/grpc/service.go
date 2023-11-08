@@ -135,3 +135,57 @@ func (s *Service) UnfollowUser(ctx context.Context, request *pb.UnfollowUserRequ
 
 	return &pb.UnfollowUserResponse{}, nil
 }
+
+func (s *Service) GetAllFollowers(ctx context.Context, request *pb.GetAllFollowersRequest) (*pb.GetAllFollowersResponse, error) {
+	users, err := s.repo.GetAllFollowers(request.UserId)
+	if err != nil {
+		s.logger.Errorf("failed to GetAllFollowers err: %v", err)
+		return nil, fmt.Errorf("GetAllFollowers err: %v", err)
+	}
+
+	var responseUsers []*pb.User
+
+	for i := 0; i < len(users); i++ {
+		follower := pb.User{
+			Id:          users[i].ID.String(),
+			FirstName:   users[i].FirstName,
+			LastName:    users[i].LastName,
+			Username:    users[i].Username,
+			Email:       users[i].Email,
+			Password:    users[i].Password,
+			IsConfirmed: users[i].IsConfirmed,
+		}
+		responseUsers = append(responseUsers, &follower)
+	}
+
+	return &pb.GetAllFollowersResponse{
+		Followers: responseUsers,
+	}, nil
+}
+
+func (s *Service) GetAllFollowings(ctx context.Context, request *pb.GetAllFollowingsRequest) (*pb.GetAllFollowingsResponse, error) {
+	users, err := s.repo.GetAllFollowings(request.UserId)
+	if err != nil {
+		s.logger.Errorf("failed to GetAllFollowings err: %v", err)
+		return nil, fmt.Errorf("GetAllFollowings err: %v", err)
+	}
+
+	var responseUsers []*pb.User
+
+	for i := 0; i < len(users); i++ {
+		following := pb.User{
+			Id:          users[i].ID.String(),
+			FirstName:   users[i].FirstName,
+			LastName:    users[i].LastName,
+			Username:    users[i].Username,
+			Email:       users[i].Email,
+			Password:    users[i].Password,
+			IsConfirmed: users[i].IsConfirmed,
+		}
+		responseUsers = append(responseUsers, &following)
+	}
+
+	return &pb.GetAllFollowingsResponse{
+		Followings: responseUsers,
+	}, nil
+}
