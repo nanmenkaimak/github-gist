@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
+	"github.com/nanmenkaimak/github-gist/internal/auth/controller/http/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 	"go.uber.org/zap"
 	"net/http"
@@ -129,6 +130,36 @@ func (f *EndpointHandler) RenewToken(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, response)
+}
+
+func (f *EndpointHandler) UpdateUser(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		f.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	username := ctx.Param("username")
+
+	var updatedUser entitiy.RegisterUserRequest
+
+	if err := ctx.BindJSON(&updatedUser); err != nil {
+		f.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	updatedUser.Username = username
+	updatedUser.ID = userID.ID
+
+	err = f.authService.UpdateUser(ctx.Request.Context(), updatedUser)
+	if err != nil {
+		f.logger.Errorf("failed to UpdateUser err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
 }
 
 func validPassword(s string) error {

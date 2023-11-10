@@ -10,4 +10,6 @@ type UseCase interface {
 	RenewToken(ctx context.Context, refreshToken string) (*JwtRenewToken, error)
 	RegisterUser(ctx context.Context, request entitiy.RegisterUserRequest) (*RegisterUserResponse, error)
 	ConfirmUser(ctx context.Context, request ConfirmUserRequest) error
+	UpdateUser(ctx context.Context, updatedUser entitiy.RegisterUserRequest) error
+	GetJWTUser(jwtToken string) (*ContextUser, error)
 }

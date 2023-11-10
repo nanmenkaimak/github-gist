@@ -37,3 +37,9 @@ func (r *Repo) GetUserByID(userID string) (*entity.User, error) {
 	}
 	return &userByID, err
 }
+
+func (r *Repo) UpdateUser(updatedUser entity.User) error {
+	err := r.main.Db.Model(&updatedUser).Where("username = ?", updatedUser.Username).
+		Updates(updatedUser).Error
+	return err
+}

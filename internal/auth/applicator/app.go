@@ -6,6 +6,7 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
 	"github.com/nanmenkaimak/github-gist/internal/auth/controller/consumer"
 	http2 "github.com/nanmenkaimak/github-gist/internal/auth/controller/http"
+	"github.com/nanmenkaimak/github-gist/internal/auth/controller/http/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/auth/database/dbpostgres"
 	"github.com/nanmenkaimak/github-gist/internal/auth/database/dbredis"
 	"github.com/nanmenkaimak/github-gist/internal/auth/repository"
@@ -82,9 +83,11 @@ func (a *App) Run() {
 
 	authService := auth.NewAuthService(repo, cfg.Auth, userVerificationProducer, dbRedis, userGrpcTransport)
 
+	authMiddleware := middleware.NewJwtV1Middleware(authService, l)
+
 	endpointHandler := http2.NewEndpointHandler(authService, l)
 
-	router := http2.NewRouter(l)
+	router := http2.NewRouter(l, authMiddleware)
 	httpCfg := cfg.HttpServer
 
 	server, err := http2.NewServer(httpCfg.Port, httpCfg.ShutdownTimeout, router, l, endpointHandler)

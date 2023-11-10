@@ -192,6 +192,9 @@
     "userserviceUnfollowUserResponse": {
       "type": "object"
     },
+    "userserviceUpdateUserResponse": {
+      "type": "object"
+    },
     "userserviceUser": {
       "type": "object",
       "properties": {

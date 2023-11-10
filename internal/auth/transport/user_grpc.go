@@ -70,3 +70,18 @@ func (t *UserGrpcTransport) ConfirmUser(ctx context.Context, email string) (*pb.
 	}
 	return resp, nil
 }
+
+func (t *UserGrpcTransport) UpdateUser(ctx context.Context, updatedUser entitiy.RegisterUserRequest) (*pb.UpdateUserResponse, error) {
+	resp, err := t.client.UpdateUser(ctx, &pb.UpdateUserRequest{
+		User: &pb.User{
+			FirstName: updatedUser.FirstName,
+			LastName:  updatedUser.LastName,
+			Username:  updatedUser.Username,
+			Email:     updatedUser.Email,
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot UpdateUser: %w", err)
+	}
+	return resp, nil
+}

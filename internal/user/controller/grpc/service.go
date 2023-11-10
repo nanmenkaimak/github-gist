@@ -189,3 +189,19 @@ func (s *Service) GetAllFollowings(ctx context.Context, request *pb.GetAllFollow
 		Followings: responseUsers,
 	}, nil
 }
+
+func (s *Service) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	userRequest := entity.User{
+		FirstName: request.User.FirstName,
+		LastName:  request.User.LastName,
+		Username:  request.User.Username,
+		Email:     request.User.Email,
+	}
+	err := s.repo.UpdateUser(userRequest)
+	if err != nil {
+		s.logger.Errorf("failed to UpdateUser err: %v", err)
+		return nil, fmt.Errorf("UpdateUser err: %w", err)
+	}
+
+	return &pb.UpdateUserResponse{}, nil
+}
