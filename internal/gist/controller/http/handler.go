@@ -540,7 +540,7 @@ func (h *EndpointHandler) UnfollowUser(ctx *gin.Context) {
 func (h *EndpointHandler) UserInfo(ctx *gin.Context) {
 	username := ctx.Param("username")
 	tab := ctx.Query("tab")
-	var response *[]gist.UserResponse
+	response := &[]gist.UserResponse{}
 	var err error
 	if tab == "follower" {
 		response, err = h.gistService.GetAllFollowers(ctx.Request.Context(), username)
@@ -552,6 +552,12 @@ func (h *EndpointHandler) UserInfo(ctx *gin.Context) {
 		if err != nil {
 			h.logger.Errorf("failed to GetAllFollowings err: %v", err)
 		}
+	} else {
+		responseInfo, err := h.gistService.GetUserInfo(ctx.Request.Context(), username)
+		if err != nil {
+			h.logger.Errorf("failed to GetUserInfo err: %v", err)
+		}
+		*response = append(*response, responseInfo)
 	}
 	if err != nil {
 		ctx.Status(http.StatusBadRequest)

@@ -471,3 +471,22 @@ func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]Use
 
 	return &responseUser, nil
 }
+
+func (a *Service) GetUserInfo(ctx context.Context, username string) (UserResponse, error) {
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
+	if err != nil {
+		return UserResponse{}, fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+
+	responseUser := UserResponse{
+		ID:          user.Id,
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
+		Username:    user.Username,
+		Email:       user.Email,
+		Password:    user.Password,
+		IsConfirmed: user.IsConfirmed,
+	}
+
+	return responseUser, nil
+}

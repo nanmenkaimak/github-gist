@@ -11,6 +11,7 @@ type UseCase interface {
 	Fork
 	Comment
 	Follow
+	User
 }
 
 type Gist interface {
@@ -46,4 +47,8 @@ type Follow interface {
 	UnfollowUser(ctx context.Context, request FollowRequest) error
 	GetAllFollowers(ctx context.Context, username string) (*[]UserResponse, error)
 	GetAllFollowings(ctx context.Context, username string) (*[]UserResponse, error)
+}
+
+type User interface {
+	GetUserInfo(ctx context.Context, username string) (UserResponse, error)
 }
