@@ -12,4 +12,6 @@ type UseCase interface {
 	ConfirmUser(ctx context.Context, request ConfirmUserRequest) error
 	UpdateUser(ctx context.Context, updatedUser entitiy.RegisterUserRequest) error
 	GetJWTUser(jwtToken string) (*ContextUser, error)
+	ResetCode(ctx context.Context, request ResetCodeRequest) error
+	ResetPassword(ctx context.Context, request UpdatePasswordRequest) error
 }

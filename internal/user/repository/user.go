@@ -43,3 +43,8 @@ func (r *Repo) UpdateUser(updatedUser entity.User) error {
 		Updates(updatedUser).Error
 	return err
 }
+
+func (r *Repo) UpdatePassword(email string, password string) error {
+	err := r.main.Db.Model(&entity.User{}).Where("email = ?", email).Update("password", password).Error
+	return err
+}

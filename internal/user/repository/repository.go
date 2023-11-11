@@ -17,6 +17,7 @@ type UserRepository interface {
 	ConfirmUser(email string) error
 	GetUserByID(userID string) (*entity.User, error)
 	UpdateUser(updatedUser entity.User) error
+	UpdatePassword(email string, password string) error
 }
 
 type FollowRepository interface {

@@ -205,3 +205,13 @@ func (s *Service) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest)
 
 	return &pb.UpdateUserResponse{}, nil
 }
+
+func (s *Service) UpdatePassword(ctx context.Context, request *pb.UpdatePasswordRequest) (*pb.UpdatePasswordResponse, error) {
+	err := s.repo.UpdatePassword(request.Email, request.NewPassword)
+	if err != nil {
+		s.logger.Errorf("failed to UpdatePassword err: %v", err)
+		return nil, fmt.Errorf("UpdatePassword err: %w", err)
+	}
+
+	return &pb.UpdatePasswordResponse{}, nil
+}

@@ -14,6 +14,7 @@ service UserService {
   rpc GetAllFollowers(GetAllFollowersRequest) returns (GetAllFollowersResponse) {}
   rpc GetAllFollowings(GetAllFollowingsRequest) returns (GetAllFollowingsResponse) {}
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {}
+  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse) {}
 }
 
 message CreateUserRequest {
@@ -81,6 +82,13 @@ message UpdateUserRequest {
 }
 
 message UpdateUserResponse {}
+
+message UpdatePasswordRequest {
+  string email = 1;
+  string new_password = 2;
+}
+
+message UpdatePasswordResponse {}
 
 message User {
   string id = 1;

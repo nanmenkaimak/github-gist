@@ -85,3 +85,14 @@ func (t *UserGrpcTransport) UpdateUser(ctx context.Context, updatedUser entitiy.
 	}
 	return resp, nil
 }
+
+func (t *UserGrpcTransport) UpdatePassword(ctx context.Context, email string, newPassword string) (*pb.UpdatePasswordResponse, error) {
+	resp, err := t.client.UpdatePassword(ctx, &pb.UpdatePasswordRequest{
+		NewPassword: newPassword,
+		Email:       email,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot UpdatePassword: %w", err)
+	}
+	return resp, nil
+}

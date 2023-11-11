@@ -35,7 +35,7 @@ func (c *UserVerificationCallback) Callback(message <-chan *sarama.ConsumerMessa
 				c.logger.Infof("user code: %s", userCode)
 
 				// save to database
-				err = c.dbRedis.Set(context.Background(), userCode.Email, userCode.Code, 1*time.Minute).Err()
+				err = c.dbRedis.Set(context.Background(), userCode.Key, userCode.Code, 2*time.Minute).Err()
 				if err != nil {
 					c.logger.Errorf("failed to save record value in redis err: %v", err)
 				}

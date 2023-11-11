@@ -32,3 +32,14 @@ type ConfirmUserRequest struct {
 type RegisterUserResponse struct {
 	ID uuid.UUID
 }
+
+type ResetCodeRequest struct {
+	Username string
+	UserID   uuid.UUID
+}
+
+type UpdatePasswordRequest struct {
+	Username    string `json:"username"`
+	NewPassword string `json:"new_password"`
+	Code        string `json:"code"`
+}

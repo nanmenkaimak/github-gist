@@ -171,8 +171,8 @@ func (a *Service) RegisterUser(ctx context.Context, request entitiy.RegisterUser
 	randNum4 := rand.Intn(10)
 
 	msg := dto.UserCode{
-		Code:  fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
-		Email: request.Email,
+		Code: fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
+		Key:  request.Email,
 	}
 
 	b, err := json.Marshal(&msg)
@@ -198,7 +198,7 @@ func (a *Service) ConfirmUser(ctx context.Context, request ConfirmUserRequest) e
 	// if ok update user confirmed by grpc
 	_, err = a.userGrpcTransport.ConfirmUser(ctx, request.Email)
 	if err != nil {
-		fmt.Errorf("ConfirmUser request err: %v", err)
+		return fmt.Errorf("ConfirmUser request err: %v", err)
 	}
 	return nil
 }
@@ -219,9 +219,63 @@ func (a *Service) UpdateUser(ctx context.Context, updatedUser entitiy.RegisterUs
 
 	_, err = a.userGrpcTransport.UpdateUser(ctx, updatedUser)
 	if err != nil {
-		fmt.Errorf("UpdateUser request err: %v", err)
+		return fmt.Errorf("UpdateUser request err: %v", err)
 	}
 	return nil
+}
+
+func (a *Service) ResetCode(ctx context.Context, request ResetCodeRequest) error {
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+	randNum1 := rand.Intn(10)
+	randNum2 := rand.Intn(10)
+	randNum3 := rand.Intn(10)
+	randNum4 := rand.Intn(10)
+
+	msg := &dto.UserCode{
+		Code: fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
+		Key:  user.Email,
+	}
+
+	b, err := json.Marshal(&msg)
+	if err != nil {
+		return fmt.Errorf("failed to marshall UserCodeReset err: %w", err)
+	}
+
+	fmt.Println(msg)
+
+	a.userVerificationProducer.ProduceMessage(b)
+
+	return nil
+}
+
+func (a *Service) ResetPassword(ctx context.Context, request UpdatePasswordRequest) error {
+	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
+	if err != nil {
+		return fmt.Errorf("GetUserByUsername request err: %v", err)
+	}
+	res, err := a.dbRedis.Get(ctx, user.Email).Result()
+	if err != nil {
+		return fmt.Errorf("redis get err: %v", err)
+	}
+
+	if res != request.Code {
+		return fmt.Errorf("wrong confirm code")
+	}
+
+	hashPass, err := a.hashPassword(request.NewPassword)
+	if err != nil {
+		return fmt.Errorf("hashing password err: %v", err)
+	}
+
+	_, err = a.userGrpcTransport.UpdatePassword(ctx, user.Email, hashPass)
+	if err != nil {
+		return fmt.Errorf("UpdatePassword request err: %v", err)
+	}
+
+	return err
 }
 
 func (a *Service) hashPassword(password string) (string, error) {

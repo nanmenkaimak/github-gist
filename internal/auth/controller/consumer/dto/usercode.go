@@ -1,6 +1,6 @@
 package dto
 
 type UserCode struct {
-	Code  string
-	Email string
+	Code string
+	Key  string
 }

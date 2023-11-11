@@ -162,6 +162,53 @@ func (f *EndpointHandler) UpdateUser(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+func (f *EndpointHandler) ResetCode(ctx *gin.Context) {
+	userID, err := middleware.GetContextUser(ctx)
+	if err != nil {
+		f.logger.Errorf("cannot find user in context")
+		ctx.Status(http.StatusUnauthorized)
+		return
+	}
+	username := ctx.Param("username")
+
+	request := auth.ResetCodeRequest{
+		Username: username,
+		UserID:   userID.ID,
+	}
+
+	err = f.authService.ResetCode(ctx.Request.Context(), request)
+	if err != nil {
+		f.logger.Errorf("failed to ResetCode err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
+}
+
+func (f *EndpointHandler) ResetPassword(ctx *gin.Context) {
+	username := ctx.Param("username")
+
+	var request auth.UpdatePasswordRequest
+
+	if err := ctx.BindJSON(&request); err != nil {
+		f.logger.Errorf("failed to unmarshall body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	request.Username = username
+
+	err := f.authService.ResetPassword(ctx.Request.Context(), request)
+	if err != nil {
+		f.logger.Errorf("failed to ResetPassword err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
+}
+
 func validPassword(s string) error {
 next:
 	for name, classes := range map[string][]*unicode.RangeTable{
