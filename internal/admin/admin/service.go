@@ -23,6 +23,14 @@ func NewAdminService(gistRepo repository.Gist, userRepo repository.User) UseCase
 }
 
 func (a *Service) GetAllGists(ctx context.Context, request GetAllGistsRequest) (*[]entity.GistRequest, error) {
+	ok, err := a.userRepo.IsAdmin(request.UserID)
+	if err != nil {
+		return nil, fmt.Errorf("IsAdmin request err: %v", err)
+	}
+	if !ok {
+		return nil, fmt.Errorf("you are not admin")
+	}
+
 	if request.Sort == "" {
 		request.Sort = "created_at"
 	}
@@ -38,6 +46,13 @@ func (a *Service) GetAllGists(ctx context.Context, request GetAllGistsRequest) (
 }
 
 func (a *Service) GetGistByID(ctx context.Context, request GetGistRequest) (*entity.GistRequest, error) {
+	ok, err := a.userRepo.IsAdmin(request.UserID)
+	if err != nil {
+		return nil, fmt.Errorf("IsAdmin request err: %v", err)
+	}
+	if !ok {
+		return nil, fmt.Errorf("you are not admin")
+	}
 	gist, err := a.gistRepo.GetGistByID(request.GistID)
 	if err != nil {
 		return nil, fmt.Errorf("getting gist err: %v", err)
@@ -51,7 +66,14 @@ func (a *Service) GetGistByID(ctx context.Context, request GetGistRequest) (*ent
 }
 
 func (a *Service) DeleteGistByID(ctx context.Context, request GetGistRequest) error {
-	err := a.gistRepo.DeleteGistByID(request.GistID)
+	ok, err := a.userRepo.IsAdmin(request.UserID)
+	if err != nil {
+		return fmt.Errorf("IsAdmin request err: %v", err)
+	}
+	if !ok {
+		return fmt.Errorf("you are not admin")
+	}
+	err = a.gistRepo.DeleteGistByID(request.GistID)
 	if err != nil {
 		return fmt.Errorf("delete gist err: %v", err)
 	}
@@ -59,6 +81,13 @@ func (a *Service) DeleteGistByID(ctx context.Context, request GetGistRequest) er
 }
 
 func (a *Service) UpdateUserByUsername(ctx context.Context, request UpdateUserRequest) error {
+	ok, err := a.userRepo.IsAdmin(request.UserID)
+	if err != nil {
+		return fmt.Errorf("IsAdmin request err: %v", err)
+	}
+	if !ok {
+		return fmt.Errorf("you are not admin")
+	}
 	hashPass, err := a.hashPassword(request.UpdatedUser.Password)
 	if err != nil {
 		return fmt.Errorf("hashing password err: %v", err)
@@ -74,6 +103,13 @@ func (a *Service) UpdateUserByUsername(ctx context.Context, request UpdateUserRe
 }
 
 func (a *Service) GetAllUsers(ctx context.Context, request GetUserRequest) (*[]entity.User, error) {
+	ok, err := a.userRepo.IsAdmin(request.UserID)
+	if err != nil {
+		return nil, fmt.Errorf("IsAdmin request err: %v", err)
+	}
+	if !ok {
+		return nil, fmt.Errorf("you are not admin")
+	}
 	users, err := a.userRepo.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("GetAllUsers request err: %v", err)
@@ -82,6 +118,13 @@ func (a *Service) GetAllUsers(ctx context.Context, request GetUserRequest) (*[]e
 }
 
 func (a *Service) GetUserByUsername(ctx context.Context, request GetUserRequest) (*entity.User, error) {
+	ok, err := a.userRepo.IsAdmin(request.UserID)
+	if err != nil {
+		return nil, fmt.Errorf("IsAdmin request err: %v", err)
+	}
+	if !ok {
+		return nil, fmt.Errorf("you are not admin")
+	}
 	user, err := a.userRepo.GetUserByUsername(request.UpdatedUserUsername)
 	if err != nil {
 		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)

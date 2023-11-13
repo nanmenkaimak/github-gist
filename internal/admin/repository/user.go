@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/nanmenkaimak/github-gist/internal/admin/entity"
+import (
+	"github.com/google/uuid"
+	"github.com/nanmenkaimak/github-gist/internal/admin/entity"
+)
 
 func (r *UserRepo) UpdateUser(updatedUser entity.User) error {
 	err := r.main.Db.Model(&updatedUser).Where("username = ?", updatedUser.Username).
@@ -27,4 +30,18 @@ func (r *UserRepo) GetAllUsers() (*[]entity.User, error) {
 	}
 
 	return &allUsers, err
+}
+
+func (r *UserRepo) IsAdmin(userID uuid.UUID) (bool, error) {
+	var user entity.User
+
+	err := r.replica.Db.Where("id = ?", userID).Find(&user).Error
+	if err != nil {
+		return false, err
+	}
+
+	if user.RoleID != 2 {
+		return false, nil
+	}
+	return true, nil
 }
