@@ -2,9 +2,10 @@ package grpc
 
 import (
 	"fmt"
+	"net"
+
 	pb "github.com/nanmenkaimak/github-gist/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
-	"net"
 )
 
 type Server struct {
@@ -33,6 +34,7 @@ func (s *Server) Start() error {
 
 	pb.RegisterUserServiceServer(s.grpcServer, s.service)
 
+	//nolint:all
 	go s.grpcServer.Serve(listener)
 
 	return nil

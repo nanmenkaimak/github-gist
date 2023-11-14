@@ -2,14 +2,15 @@ package applicator
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/nanmenkaimak/github-gist/internal/user/config"
 	"github.com/nanmenkaimak/github-gist/internal/user/controller/grpc"
 	"github.com/nanmenkaimak/github-gist/internal/user/database/dbpostgres"
 	"github.com/nanmenkaimak/github-gist/internal/user/repository"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 type App struct {

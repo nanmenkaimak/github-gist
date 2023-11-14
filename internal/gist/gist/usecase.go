@@ -2,6 +2,7 @@ package gist
 
 import (
 	"context"
+
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 )
 

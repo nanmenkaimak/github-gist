@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/magiconair/properties/assert"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	mock_repository "github.com/nanmenkaimak/github-gist/internal/gist/repository/mocks"
 	"github.com/nanmenkaimak/github-gist/internal/gist/transport"
 	"go.uber.org/mock/gomock"
-	"testing"
 )
 
 func TestCreateGist(t *testing.T) {
@@ -97,7 +98,7 @@ func TestCreateGist(t *testing.T) {
 			newRepo := mock_repository.NewMockRepository(c)
 			tt.mockBehavior(newRepo, tt.inputUser)
 
-			var userTransport *transport.UserTransport
+			var userTransport *transport.UserGrpcTransport
 			usecase := NewGistService(newRepo, userTransport)
 
 			response, err := usecase.CreateGist(context.Background(), tt.inputUser)
@@ -188,7 +189,7 @@ func TestGetAllGists(t *testing.T) {
 			newRepo := mock_repository.NewMockRepository(c)
 			tt.mockBehavior(newRepo, tt.inputUser)
 
-			var userTransport *transport.UserTransport
+			var userTransport *transport.UserGrpcTransport
 			usecase := NewGistService(newRepo, userTransport)
 
 			response, err := usecase.GetAllGists(context.Background(), tt.inputUser)

@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/user/entity"
 	"github.com/nanmenkaimak/github-gist/internal/user/repository"

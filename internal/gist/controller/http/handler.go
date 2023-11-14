@@ -1,13 +1,14 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	"github.com/nanmenkaimak/github-gist/internal/gist/gist"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type EndpointHandler struct {

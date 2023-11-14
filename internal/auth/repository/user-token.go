@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+
 	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 )
 

@@ -2,8 +2,8 @@ package admin
 
 import (
 	"context"
-	"errors"
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/admin/entity"
 	"github.com/nanmenkaimak/github-gist/internal/admin/repository"
@@ -135,14 +135,4 @@ func (a *Service) GetUserByUsername(ctx context.Context, request GetUserRequest)
 func (a *Service) hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
-}
-
-func (a *Service) comparePassword(password1 string, password2 string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(password1), []byte(password2))
-	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-		return fmt.Errorf("incorrect password err: %v", err)
-	} else if err != nil {
-		return fmt.Errorf("password auth err: %v", err)
-	}
-	return nil
 }

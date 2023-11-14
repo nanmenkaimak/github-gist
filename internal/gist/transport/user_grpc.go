@@ -3,6 +3,7 @@ package transport
 import (
 	"context"
 	"fmt"
+
 	"github.com/nanmenkaimak/github-gist/internal/gist/config"
 	pb "github.com/nanmenkaimak/github-gist/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"

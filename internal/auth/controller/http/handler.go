@@ -2,13 +2,14 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+	"unicode"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
 	"github.com/nanmenkaimak/github-gist/internal/auth/controller/http/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 	"go.uber.org/zap"
-	"net/http"
-	"unicode"
 )
 
 type EndpointHandler struct {

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+
 	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 )
 

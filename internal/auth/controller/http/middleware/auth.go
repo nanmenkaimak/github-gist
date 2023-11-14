@@ -3,11 +3,12 @@ package middleware
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
 	"go.uber.org/zap"
-	"net/http"
-	"strings"
 )
 
 const (

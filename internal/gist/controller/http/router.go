@@ -1,10 +1,11 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http/middleware"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type router struct {

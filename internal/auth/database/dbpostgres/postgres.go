@@ -2,6 +2,7 @@ package dbpostgres
 
 import (
 	"fmt"
+
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
 	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 	"gorm.io/driver/postgres"
@@ -30,7 +31,10 @@ func New(cfg config.DbNode) (*Db, error) {
 		return nil, fmt.Errorf("db connection failed: %w", err)
 	}
 
-	db.AutoMigrate(&entitiy.UserToken{})
+	err = db.AutoMigrate(&entitiy.UserToken{})
+	if err != nil {
+		return nil, fmt.Errorf("AutoMigrate err: %v", err)
+	}
 	return &Db{
 		Db: db,
 	}, nil

@@ -3,6 +3,7 @@ package transport
 import (
 	"context"
 	"fmt"
+
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
 	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
 	pb "github.com/nanmenkaimak/github-gist/pkg/protobuf/userservice/gw"

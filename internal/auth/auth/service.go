@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
@@ -15,8 +18,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
-	"math/rand"
-	"time"
 )
 
 type Service struct {

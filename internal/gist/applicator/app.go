@@ -2,6 +2,10 @@ package applicator
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/nanmenkaimak/github-gist/internal/gist/auth"
 	"github.com/nanmenkaimak/github-gist/internal/gist/config"
 	http2 "github.com/nanmenkaimak/github-gist/internal/gist/controller/http"
@@ -11,9 +15,6 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/gist/repository"
 	"github.com/nanmenkaimak/github-gist/internal/gist/transport"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 type App struct {

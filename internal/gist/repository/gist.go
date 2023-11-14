@@ -2,10 +2,11 @@ package repository
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	"gorm.io/gorm"
-	"time"
 )
 
 func (r *Repo) CreateGist(newGist entity.GistRequest) (uuid.UUID, error) {

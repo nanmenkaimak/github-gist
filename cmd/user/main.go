@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/nanmenkaimak/github-gist/internal/user/applicator"
 	"github.com/nanmenkaimak/github-gist/internal/user/config"
 	"github.com/spf13/viper"
@@ -10,6 +11,7 @@ import (
 
 func main() {
 	logger, _ := zap.NewProduction()
+	//nolint:all
 	defer logger.Sync()
 
 	l := logger.Sugar()

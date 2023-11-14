@@ -1,11 +1,12 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	echo_middleware "github.com/labstack/echo/v4/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/admin/controller/http/middleware"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type router struct {

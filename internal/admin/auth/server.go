@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"fmt"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/admin/config"
