@@ -541,7 +541,7 @@ func (h *EndpointHandler) UnfollowUser(ctx *gin.Context) {
 func (h *EndpointHandler) UserInfo(ctx *gin.Context) {
 	username := ctx.Param("username")
 	tab := ctx.Query("tab")
-	response := &[]gist.UserResponse{}
+	response := &[]entity.UserResponse{}
 	var err error
 	if tab == "follower" {
 		response, err = h.gistService.GetAllFollowers(ctx.Request.Context(), username)

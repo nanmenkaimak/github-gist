@@ -28,8 +28,8 @@ type UserServiceClient interface {
 	GetUserByID(ctx context.Context, in *GetUserByIDRequest, opts ...grpc.CallOption) (*GetUserByIDResponse, error)
 	FollowUser(ctx context.Context, in *FollowUserRequest, opts ...grpc.CallOption) (*FollowUserResponse, error)
 	UnfollowUser(ctx context.Context, in *UnfollowUserRequest, opts ...grpc.CallOption) (*UnfollowUserResponse, error)
-	GetAllFollowers(ctx context.Context, in *GetAllFollowersRequest, opts ...grpc.CallOption) (*GetAllFollowersResponse, error)
-	GetAllFollowings(ctx context.Context, in *GetAllFollowingsRequest, opts ...grpc.CallOption) (*GetAllFollowingsResponse, error)
+	GetAllFollowers(ctx context.Context, in *GetAllFollowersRequest, opts ...grpc.CallOption) (UserService_GetAllFollowersClient, error)
+	GetAllFollowings(ctx context.Context, in *GetAllFollowingsRequest, opts ...grpc.CallOption) (UserService_GetAllFollowingsClient, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordResponse, error)
 }
@@ -96,22 +96,68 @@ func (c *userServiceClient) UnfollowUser(ctx context.Context, in *UnfollowUserRe
 	return out, nil
 }
 
-func (c *userServiceClient) GetAllFollowers(ctx context.Context, in *GetAllFollowersRequest, opts ...grpc.CallOption) (*GetAllFollowersResponse, error) {
-	out := new(GetAllFollowersResponse)
-	err := c.cc.Invoke(ctx, "/userservice.UserService/GetAllFollowers", in, out, opts...)
+func (c *userServiceClient) GetAllFollowers(ctx context.Context, in *GetAllFollowersRequest, opts ...grpc.CallOption) (UserService_GetAllFollowersClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[0], "/userservice.UserService/GetAllFollowers", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &userServiceGetAllFollowersClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
-func (c *userServiceClient) GetAllFollowings(ctx context.Context, in *GetAllFollowingsRequest, opts ...grpc.CallOption) (*GetAllFollowingsResponse, error) {
-	out := new(GetAllFollowingsResponse)
-	err := c.cc.Invoke(ctx, "/userservice.UserService/GetAllFollowings", in, out, opts...)
+type UserService_GetAllFollowersClient interface {
+	Recv() (*GetAllFollowersResponse, error)
+	grpc.ClientStream
+}
+
+type userServiceGetAllFollowersClient struct {
+	grpc.ClientStream
+}
+
+func (x *userServiceGetAllFollowersClient) Recv() (*GetAllFollowersResponse, error) {
+	m := new(GetAllFollowersResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *userServiceClient) GetAllFollowings(ctx context.Context, in *GetAllFollowingsRequest, opts ...grpc.CallOption) (UserService_GetAllFollowingsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[1], "/userservice.UserService/GetAllFollowings", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &userServiceGetAllFollowingsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type UserService_GetAllFollowingsClient interface {
+	Recv() (*GetAllFollowingsResponse, error)
+	grpc.ClientStream
+}
+
+type userServiceGetAllFollowingsClient struct {
+	grpc.ClientStream
+}
+
+func (x *userServiceGetAllFollowingsClient) Recv() (*GetAllFollowingsResponse, error) {
+	m := new(GetAllFollowingsResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
@@ -142,8 +188,8 @@ type UserServiceServer interface {
 	GetUserByID(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error)
 	FollowUser(context.Context, *FollowUserRequest) (*FollowUserResponse, error)
 	UnfollowUser(context.Context, *UnfollowUserRequest) (*UnfollowUserResponse, error)
-	GetAllFollowers(context.Context, *GetAllFollowersRequest) (*GetAllFollowersResponse, error)
-	GetAllFollowings(context.Context, *GetAllFollowingsRequest) (*GetAllFollowingsResponse, error)
+	GetAllFollowers(*GetAllFollowersRequest, UserService_GetAllFollowersServer) error
+	GetAllFollowings(*GetAllFollowingsRequest, UserService_GetAllFollowingsServer) error
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
@@ -171,11 +217,11 @@ func (UnimplementedUserServiceServer) FollowUser(context.Context, *FollowUserReq
 func (UnimplementedUserServiceServer) UnfollowUser(context.Context, *UnfollowUserRequest) (*UnfollowUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnfollowUser not implemented")
 }
-func (UnimplementedUserServiceServer) GetAllFollowers(context.Context, *GetAllFollowersRequest) (*GetAllFollowersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllFollowers not implemented")
+func (UnimplementedUserServiceServer) GetAllFollowers(*GetAllFollowersRequest, UserService_GetAllFollowersServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAllFollowers not implemented")
 }
-func (UnimplementedUserServiceServer) GetAllFollowings(context.Context, *GetAllFollowingsRequest) (*GetAllFollowingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllFollowings not implemented")
+func (UnimplementedUserServiceServer) GetAllFollowings(*GetAllFollowingsRequest, UserService_GetAllFollowingsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAllFollowings not implemented")
 }
 func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
@@ -304,40 +350,46 @@ func _UserService_UnfollowUser_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetAllFollowers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllFollowersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _UserService_GetAllFollowers_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetAllFollowersRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).GetAllFollowers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/userservice.UserService/GetAllFollowers",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetAllFollowers(ctx, req.(*GetAllFollowersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(UserServiceServer).GetAllFollowers(m, &userServiceGetAllFollowersServer{stream})
 }
 
-func _UserService_GetAllFollowings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllFollowingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+type UserService_GetAllFollowersServer interface {
+	Send(*GetAllFollowersResponse) error
+	grpc.ServerStream
+}
+
+type userServiceGetAllFollowersServer struct {
+	grpc.ServerStream
+}
+
+func (x *userServiceGetAllFollowersServer) Send(m *GetAllFollowersResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _UserService_GetAllFollowings_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetAllFollowingsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).GetAllFollowings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/userservice.UserService/GetAllFollowings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetAllFollowings(ctx, req.(*GetAllFollowingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(UserServiceServer).GetAllFollowings(m, &userServiceGetAllFollowingsServer{stream})
+}
+
+type UserService_GetAllFollowingsServer interface {
+	Send(*GetAllFollowingsResponse) error
+	grpc.ServerStream
+}
+
+type userServiceGetAllFollowingsServer struct {
+	grpc.ServerStream
+}
+
+func (x *userServiceGetAllFollowingsServer) Send(m *GetAllFollowingsResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -408,14 +460,6 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_UnfollowUser_Handler,
 		},
 		{
-			MethodName: "GetAllFollowers",
-			Handler:    _UserService_GetAllFollowers_Handler,
-		},
-		{
-			MethodName: "GetAllFollowings",
-			Handler:    _UserService_GetAllFollowings_Handler,
-		},
-		{
 			MethodName: "UpdateUser",
 			Handler:    _UserService_UpdateUser_Handler,
 		},
@@ -424,6 +468,17 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_UpdatePassword_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetAllFollowers",
+			Handler:       _UserService_GetAllFollowers_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetAllFollowings",
+			Handler:       _UserService_GetAllFollowings_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "user.proto",
 }

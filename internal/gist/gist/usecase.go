@@ -46,10 +46,10 @@ type Comment interface {
 type Follow interface {
 	FollowUser(ctx context.Context, request FollowRequest) error
 	UnfollowUser(ctx context.Context, request FollowRequest) error
-	GetAllFollowers(ctx context.Context, username string) (*[]UserResponse, error)
-	GetAllFollowings(ctx context.Context, username string) (*[]UserResponse, error)
+	GetAllFollowers(ctx context.Context, username string) (*[]entity.UserResponse, error)
+	GetAllFollowings(ctx context.Context, username string) (*[]entity.UserResponse, error)
 }
 
 type User interface {
-	GetUserInfo(ctx context.Context, username string) (UserResponse, error)
+	GetUserInfo(ctx context.Context, username string) (entity.UserResponse, error)
 }

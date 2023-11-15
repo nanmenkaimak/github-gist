@@ -43,10 +43,10 @@ func (r *Repo) GetAllFollowers(userID string) ([]entity.User, error) {
 		var ids []uuid.UUID
 
 		for i := 0; i < len(allFollowersID); i++ {
-			ids = append(ids, allFollowersID[0].FollowerID)
+			ids = append(ids, allFollowersID[i].FollowerID)
 		}
 
-		res = tx.Where("id = ?", ids).Find(&followers)
+		res = tx.Where("id in ?", ids).Find(&followers)
 		if res.Error != nil {
 			tx.Rollback()
 			return res.Error
@@ -72,10 +72,10 @@ func (r *Repo) GetAllFollowings(userID string) ([]entity.User, error) {
 		var ids []uuid.UUID
 
 		for i := 0; i < len(allFollowingsID); i++ {
-			ids = append(ids, allFollowingsID[0].FollowingID)
+			ids = append(ids, allFollowingsID[i].FollowingID)
 		}
 
-		res = tx.Where("id = ?", ids).Find(&followings)
+		res = tx.Where("id in ?", ids).Find(&followings)
 		if res.Error != nil {
 			tx.Rollback()
 			return res.Error

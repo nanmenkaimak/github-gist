@@ -413,7 +413,7 @@ func (a *Service) UnfollowUser(ctx context.Context, request FollowRequest) error
 	return nil
 }
 
-func (a *Service) GetAllFollowers(ctx context.Context, username string) (*[]UserResponse, error) {
+func (a *Service) GetAllFollowers(ctx context.Context, username string) (*[]entity.UserResponse, error) {
 	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
@@ -424,26 +424,10 @@ func (a *Service) GetAllFollowers(ctx context.Context, username string) (*[]User
 		return nil, fmt.Errorf("GetAllFollowers request err: %v", err)
 	}
 
-	var responseUser []UserResponse
-
-	for i := 0; i < len(resp.Followers); i++ {
-		user := UserResponse{
-			ID:          resp.Followers[i].Id,
-			FirstName:   resp.Followers[i].FirstName,
-			LastName:    resp.Followers[i].LastName,
-			Username:    resp.Followers[i].Username,
-			Email:       resp.Followers[i].Email,
-			Password:    resp.Followers[i].Password,
-			IsConfirmed: resp.Followers[i].IsConfirmed,
-		}
-
-		responseUser = append(responseUser, user)
-	}
-
-	return &responseUser, nil
+	return resp, nil
 }
 
-func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]UserResponse, error) {
+func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]entity.UserResponse, error) {
 	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
@@ -454,32 +438,16 @@ func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]Use
 		return nil, fmt.Errorf("GetAllFollowings request err: %v", err)
 	}
 
-	var responseUser []UserResponse
-
-	for i := 0; i < len(resp.Followings); i++ {
-		user := UserResponse{
-			ID:          resp.Followings[i].Id,
-			FirstName:   resp.Followings[i].FirstName,
-			LastName:    resp.Followings[i].LastName,
-			Username:    resp.Followings[i].Username,
-			Email:       resp.Followings[i].Email,
-			Password:    resp.Followings[i].Password,
-			IsConfirmed: resp.Followings[i].IsConfirmed,
-		}
-
-		responseUser = append(responseUser, user)
-	}
-
-	return &responseUser, nil
+	return resp, nil
 }
 
-func (a *Service) GetUserInfo(ctx context.Context, username string) (UserResponse, error) {
+func (a *Service) GetUserInfo(ctx context.Context, username string) (entity.UserResponse, error) {
 	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
 	if err != nil {
-		return UserResponse{}, fmt.Errorf("GetUserByUsername request err: %v", err)
+		return entity.UserResponse{}, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	responseUser := UserResponse{
+	responseUser := entity.UserResponse{
 		ID:          user.Id,
 		FirstName:   user.FirstName,
 		LastName:    user.LastName,
