@@ -1,0 +1,529 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "Gist-service API.",
+    "version": "0.0.1"
+  },
+  "host": "localhost:8082",
+  "basePath": "/api/gist",
+  "paths": {
+    "/v1/all-gists": {
+      "get": {
+        "description": "Get All Gists",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Get All Gists",
+        "operationId": "get_all_gists",
+        "responses": {
+          "200": {
+            "description": "GistRequest",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GistRequest"
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/create-gist": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Create Gist",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Create Gist",
+        "operationId": "gist_create",
+        "parameters": [
+          {
+            "name": "GistRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/GistRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "CreateGistResponse",
+            "schema": {
+              "$ref": "#/definitions/CreateGistResponse"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/gists": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "If it is user's account, they can see secret gists",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Get All Gists Of User",
+        "operationId": "get_all_gists_of_user",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GistRequest",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GistRequest"
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/public": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get All Public Gists Of Users",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Get All Public Gists",
+        "operationId": "get_all_public_gists",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GistRequest",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GistRequest"
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/secret": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get All Secret Gists, if it is user's account",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Get All Secret Gists",
+        "operationId": "get_all_secret_gists",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GistRequest",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GistRequest"
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/{gist_id}": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get Gist By ID of user",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Get Gist By ID",
+        "operationId": "get_gist_by_id",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          },
+          {
+            "name": "gist_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GistRequest",
+            "schema": {
+              "$ref": "#/definitions/GistRequest"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/{gist_id}/edit": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Update Gist By ID, if it is user's account",
+        "consumes": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Update Gist By ID",
+        "operationId": "update_gist_by_id",
+        "parameters": [
+          {
+            "name": "GistRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/GistRequest"
+            }
+          },
+          {
+            "name": "username",
+            "in": "path"
+          },
+          {
+            "name": "gist_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Delete Gist By ID, if it user's account",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Gists"
+        ],
+        "summary": "Delete Gist By ID",
+        "operationId": "delete_gist_by_id",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          },
+          {
+            "name": "gist_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Commit": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string",
+          "x-go-name": "Comment"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
+        },
+        "gist_id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "GistID"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "ID"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/entity"
+    },
+    "CreateGistResponse": {
+      "type": "object",
+      "properties": {
+        "gist_id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "GistID"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/gist"
+    },
+    "File": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-go-name": "Code"
+        },
+        "commit_id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "CommitID"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/entity"
+    },
+    "Gist": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
+        },
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "ID"
+        },
+        "is_forked": {
+          "type": "boolean",
+          "x-go-name": "IsForked"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "UpdatedAt"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "UserID"
+        },
+        "visible": {
+          "type": "boolean",
+          "x-go-name": "Visible"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/entity"
+    },
+    "GistRequest": {
+      "type": "object",
+      "properties": {
+        "commit": {
+          "$ref": "#/definitions/Commit"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/File"
+          },
+          "x-go-name": "Files"
+        },
+        "gist": {
+          "$ref": "#/definitions/Gist"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/entity"
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "x-tagGroups": [
+    {
+      "name": "Gist",
+      "tags": [
+        "Gists"
+      ]
+    }
+  ]
+}

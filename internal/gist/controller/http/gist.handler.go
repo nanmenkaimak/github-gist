@@ -9,6 +9,31 @@ import (
 	"net/http"
 )
 
+// swagger:route POST /v1/create-gist Gists gist_create
+//
+// # Create Gist
+//
+// # Create Gist
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: GistRequest
+//			in: body
+//			required: true
+//			type: GistRequest
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  201: CreateGistResponse
+//		  401:
+//	   400:
 func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -37,6 +62,19 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gistID)
 }
 
+// swagger:route GET /v1/all-gists Gists get_all_gists
+//
+// # Get All Gists
+//
+// Get All Gists
+//
+//	Produces:
+//	- application/json
+//
+//	Schemes: http, https
+//	Responses:
+//	  200: []GistRequest
+//	  400:
 func (h *EndpointHandler) GetAllGists(ctx *gin.Context) {
 	direction := ctx.Query("direction")
 	sort := ctx.Query("sort")
@@ -54,6 +92,28 @@ func (h *EndpointHandler) GetAllGists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, allGists)
 }
 
+// swagger:route GET /v1/{username}/{gist_id} Gists get_gist_by_id
+//
+// # Get Gist By ID
+//
+// # Get Gist By ID of user
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//		  + name: gist_id
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  200: GistRequest
+//		  401:
+//	   400:
 func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -85,6 +145,26 @@ func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gist)
 }
 
+// swagger:route GET /v1/{username}/gists Gists get_all_gists_of_user
+//
+// # Get All Gists Of User
+//
+// # If it is user's account, they can see secret gists
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  200: []GistRequest
+//		  401:
+//	   400:
 func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -110,6 +190,26 @@ func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gists)
 }
 
+// swagger:route GET /v1/{username}/secret Gists get_all_secret_gists
+//
+// # Get All Secret Gists
+//
+// # Get All Secret Gists, if it is user's account
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  200: []GistRequest
+//		  401:
+//	   400:
 func (h *EndpointHandler) GetAllSecretGists(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -133,6 +233,26 @@ func (h *EndpointHandler) GetAllSecretGists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gists)
 }
 
+// swagger:route GET /v1/{username}/public Gists get_all_public_gists
+//
+// # Get All Public Gists
+//
+// # Get All Public Gists Of Users
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  200: []GistRequest
+//		  401:
+//	   400:
 func (h *EndpointHandler) GetAllPublicGists(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -156,6 +276,32 @@ func (h *EndpointHandler) GetAllPublicGists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gists)
 }
 
+// swagger:route PUT /v1/{username}/{gist_id}/edit Gists update_gist_by_id
+//
+// # Update Gist By ID
+//
+// # Update Gist By ID, if it is user's account
+//
+// Consumes:
+// - application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: GistRequest
+//			in: body
+//			required: true
+//			type: GistRequest
+//		  + name: username
+//			in: path
+//		  + name: gist_id
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  204:
+//		  401:
+//	   400:
 func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -196,6 +342,28 @@ func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+// swagger:route DELETE /v1/{username}/{gist_id}/edit Gists delete_gist_by_id
+//
+// # Delete Gist By ID
+//
+// # Delete Gist By ID, if it user's account
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//		  + name: gist_id
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  204:
+//		  401:
+//	   400:
 func (h *EndpointHandler) DeleteGistByID(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {

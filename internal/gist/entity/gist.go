@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// swagger:model GistRequest
 type GistRequest struct {
 	Gist   Gist   `json:"gist"`
 	Commit Commit `json:"commit"`

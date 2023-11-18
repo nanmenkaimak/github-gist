@@ -5,6 +5,7 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 )
 
+// swagger:model CreateGistResponse
 type CreateGistResponse struct {
 	GistID uuid.UUID `json:"gist_id"`
 }
