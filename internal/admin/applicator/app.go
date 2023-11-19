@@ -2,6 +2,7 @@ package applicator
 
 import (
 	"context"
+	"github.com/nanmenkaimak/github-gist/internal/admin/storage"
 	"os"
 	"os/signal"
 	"syscall"
@@ -83,7 +84,11 @@ func (a *App) Run() {
 
 	authService := auth.NewService(cfg.Auth)
 
-	adminService := admin.NewAdminService(gistRepo, userRepo)
+	userStorage := storage.NewDataStorage(cfg.Storage.Interval, userRepo, l)
+
+	go userStorage.Run()
+
+	adminService := admin.NewAdminService(gistRepo, userRepo, userStorage)
 
 	authMiddleware := middleware.NewJwtV1Middleware(authService, l)
 

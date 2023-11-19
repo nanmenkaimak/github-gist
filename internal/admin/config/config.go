@@ -6,6 +6,7 @@ type Config struct {
 	HttpServer HttpServer `yaml:"HttpServer"`
 	Databases  Databases  `yaml:"Databases"`
 	Auth       Auth       `yaml:"JwtSecretKey"`
+	Storage    Storage    `yaml:"Storage"`
 }
 
 type HttpServer struct {
@@ -34,4 +35,9 @@ type DbNode struct {
 
 type Auth struct {
 	JwtSecretKey string `yaml:"JwtSecretKey"`
+}
+
+type Storage struct {
+	Interval        time.Duration `yaml:"Interval"`
+	ShutdownTimeout time.Duration `yaml:"ShutdownTimeout"`
 }

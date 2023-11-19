@@ -37,7 +37,7 @@ func (a *Service) GetAllUsers(ctx context.Context, request GetUserRequest) (*[]e
 	if !ok {
 		return nil, fmt.Errorf("you are not admin")
 	}
-	users, err := a.userRepo.GetAllUsers()
+	users, err := a.storage.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("GetAllUsers request err: %v", err)
 	}
