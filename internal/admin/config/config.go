@@ -38,6 +38,5 @@ type Auth struct {
 }
 
 type Storage struct {
-	Interval        time.Duration `yaml:"Interval"`
-	ShutdownTimeout time.Duration `yaml:"ShutdownTimeout"`
+	Interval time.Duration `yaml:"Interval"`
 }

@@ -29,6 +29,8 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		})
 	})
 
+	r.GET("/swagger/*w", gin.WrapH(eh.Swagger()))
+
 	gist := r.Group("/api/gist/v1")
 	{
 		gist.Use(s.authMiddleware.Auth())

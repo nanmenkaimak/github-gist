@@ -40,7 +40,6 @@ func (pm *DataStorage) Run() {
 			return
 		case <-ticker.C:
 			startTime := time.Now()
-			fmt.Println(startTime)
 
 			pm.LoadData()
 

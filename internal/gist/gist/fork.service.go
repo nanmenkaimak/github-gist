@@ -18,8 +18,8 @@ func (a *Service) ForkGist(ctx context.Context, request ForkRequest) (*ForkGistR
 		return nil, fmt.Errorf("parse uuid err: %v", err)
 	}
 
-	if userID != request.UserID {
-		return nil, fmt.Errorf("it is not your gist err: %v", err)
+	if userID == request.UserID {
+		return nil, fmt.Errorf("it is your gist err: %v", err)
 	}
 
 	gist, err := a.repo.GetGistByID(request.GistID, false)
