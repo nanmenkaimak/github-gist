@@ -3,6 +3,7 @@ package gist
 import (
 	"context"
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 )

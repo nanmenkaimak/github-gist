@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/auth/controller/consumer/dto"
-	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 	"golang.org/x/crypto/bcrypt"
-	"math/rand"
 )
 
-func (a *Service) RegisterUser(ctx context.Context, request entitiy.RegisterUserRequest) (*RegisterUserResponse, error) {
+func (a *Service) RegisterUser(ctx context.Context, request entity.RegisterUserRequest) (*RegisterUserResponse, error) {
 	// user create by grpc
 	hashPass, err := a.hashPassword(request.Password)
 	if err != nil {
@@ -71,7 +72,7 @@ func (a *Service) ConfirmUser(ctx context.Context, request ConfirmUserRequest) e
 	return nil
 }
 
-func (a *Service) UpdateUser(ctx context.Context, updatedUser entitiy.RegisterUserRequest) error {
+func (a *Service) UpdateUser(ctx context.Context, updatedUser entity.RegisterUserRequest) error {
 	user, err := a.userGrpcTransport.GetUserByUsername(ctx, updatedUser.Username)
 	if err != nil {
 		return fmt.Errorf("GetUserByUsername request err: %v", err)

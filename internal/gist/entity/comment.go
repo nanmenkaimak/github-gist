@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// swagger:model Comment
 type Comment struct {
 	ID        uuid.UUID `json:"id" gorm:"type:uuid; default:gen_random_uuid()"`
 	UserID    uuid.UUID `json:"user_id" gorm:"type:uuid; not null"`

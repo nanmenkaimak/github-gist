@@ -1,12 +1,13 @@
 package http
 
 import (
-	"github.com/nanmenkaimak/github-gist/internal/gist/gist"
-	"github.com/nanmenkaimak/github-gist/swagger"
-	"go.uber.org/zap"
 	"io/fs"
 	"mime"
 	"net/http"
+
+	"github.com/nanmenkaimak/github-gist/internal/gist/gist"
+	"github.com/nanmenkaimak/github-gist/swagger"
+	"go.uber.org/zap"
 )
 
 type EndpointHandler struct {

@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenRequest) (*JwtUserToken, error) {
@@ -58,7 +59,7 @@ func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 		return nil, fmt.Errorf("SignedString err: %w", err)
 	}
 
-	userToken := entitiy.UserToken{
+	userToken := entity.UserToken{
 		UserID:       userID,
 		Token:        tokenString,
 		RefreshToken: refreshTokenString,
@@ -101,7 +102,7 @@ func (a *Service) RenewToken(ctx context.Context, refreshToken string) (*JwtRene
 		return nil, fmt.Errorf("SignedString err: %w", err)
 	}
 
-	newToken := entitiy.UserToken{
+	newToken := entity.UserToken{
 		UserID: userID,
 		Token:  tokenString,
 	}

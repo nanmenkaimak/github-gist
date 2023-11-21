@@ -1,15 +1,16 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
 	"github.com/nanmenkaimak/github-gist/internal/auth/controller/http/middleware"
-	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
-	"net/http"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 )
 
 func (f *EndpointHandler) Register(ctx *gin.Context) {
-	var request entitiy.RegisterUserRequest
+	var request entity.RegisterUserRequest
 	if err := ctx.BindJSON(&request); err != nil {
 		f.logger.Errorf("failed to unmarshall body err: %v", err)
 		ctx.Status(http.StatusBadRequest)
@@ -57,7 +58,7 @@ func (f *EndpointHandler) UpdateUser(ctx *gin.Context) {
 	}
 	username := ctx.Param("username")
 
-	var updatedUser entitiy.RegisterUserRequest
+	var updatedUser entity.RegisterUserRequest
 
 	if err := ctx.BindJSON(&updatedUser); err != nil {
 		f.logger.Errorf("failed to unmarshall body err: %v", err)

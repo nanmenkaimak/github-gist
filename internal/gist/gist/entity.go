@@ -46,6 +46,7 @@ type ForkRequest struct {
 	Username string
 }
 
+// swagger:model ForkGistResponse
 type ForkGistResponse struct {
 	GistID uuid.UUID `json:"gist_id"`
 }

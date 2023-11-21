@@ -26,10 +26,10 @@ type Role struct {
 }
 
 type Follower struct {
-	ID          uuid.UUID `json:"id" gorm:"primaryKey; type:uuid; default:gen_random_uuid()"`
-	FollowerID  uuid.UUID `json:"follower_id" gorm:"not null"`
-	Follower    User      `json:"-" gorm:"constraint:OnDelete:CASCADE"`
+	ID          uuid.UUID `json:"id" gorm:"type:uuid; default:gen_random_uuid()"`
 	FollowingID uuid.UUID `json:"following_id" gorm:"not null"`
 	Following   User      `json:"-" gorm:"constraint:OnDelete:CASCADE"`
+	FollowerID  uuid.UUID `json:"follower_id" gorm:"not null"`
+	Follower    User      `json:"-" gorm:"constraint:OnDelete:CASCADE"`
 	CreatedAt   time.Time `json:"created_at" gorm:"default:now()"`
 }

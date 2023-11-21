@@ -1,9 +1,10 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
-	"net/http"
 )
 
 func (f *EndpointHandler) Login(ctx *gin.Context) {

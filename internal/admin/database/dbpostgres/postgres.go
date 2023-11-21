@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/nanmenkaimak/github-gist/internal/admin/config"
-	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -31,7 +31,7 @@ func New(cfg config.DbNode) (*Db, error) {
 		return nil, fmt.Errorf("db connection failed: %w", err)
 	}
 
-	err = db.AutoMigrate(&entitiy.UserToken{})
+	err = db.AutoMigrate(&entity.UserToken{})
 	if err != nil {
 		return nil, fmt.Errorf("AutoMigrate err: %v", err)
 	}

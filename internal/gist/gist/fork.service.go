@@ -3,6 +3,7 @@ package gist
 import (
 	"context"
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 )
@@ -25,6 +26,9 @@ func (a *Service) ForkGist(ctx context.Context, request ForkRequest) (*ForkGistR
 	gist, err := a.repo.GetGistByID(request.GistID, false)
 	if err != nil {
 		return nil, fmt.Errorf("getting gist err: %v", err)
+	}
+	if gist.Gist.ID == uuid.Nil {
+		return nil, fmt.Errorf("getting secret or unknown gist")
 	}
 
 	var files []entity.File

@@ -35,13 +35,13 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 	{
 		gist.Use(s.authMiddleware.Auth())
 		gist.POST("/create-gist", eh.CreateGist)
-		gist.GET("/all-gists", eh.GetAllGists)
+		gist.GET("/", eh.GetAllGists)
 		gist.GET("/:username/:gist_id", eh.GetGistByID)
 		gist.GET("/:username/gists", eh.GetAllGistsOfUser)
 		gist.GET("/:username/secret", eh.GetAllSecretGists)
 		gist.GET("/:username/public", eh.GetAllPublicGists)
-		gist.PUT("/:username/:gist_id/edit", eh.UpdateGistByID)
-		gist.DELETE("/:username/:gist_id/edit", eh.DeleteGistByID)
+		gist.PUT("/:username/:gist_id", eh.UpdateGistByID)
+		gist.DELETE("/:username/:gist_id", eh.DeleteGistByID)
 
 		gist.POST("/:username/:gist_id/star", eh.StarGist)
 		gist.GET("/:username/starred", eh.GetStaredGists)
@@ -54,10 +54,6 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		gist.GET("/:username/:gist_id/comment", eh.GetCommentsOfGist)
 		gist.DELETE("/:username/:gist_id/comment/:comment_id", eh.DeleteComment)
 		gist.PATCH("/:username/:gist_id/comment/:comment_id", eh.UpdateComment)
-
-		gist.POST("/:username/follow", eh.FollowUser)
-		gist.POST("/:username/unfollow", eh.UnfollowUser)
-		gist.GET("/:username", eh.UserInfo)
 	}
 
 	return r

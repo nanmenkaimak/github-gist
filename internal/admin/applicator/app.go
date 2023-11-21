@@ -2,10 +2,11 @@ package applicator
 
 import (
 	"context"
-	"github.com/nanmenkaimak/github-gist/internal/admin/storage"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/nanmenkaimak/github-gist/internal/admin/storage"
 
 	"github.com/nanmenkaimak/github-gist/internal/admin/admin"
 	"github.com/nanmenkaimak/github-gist/internal/admin/auth"

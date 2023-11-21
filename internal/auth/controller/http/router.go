@@ -35,6 +35,7 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		auth.POST("/renew-token", eh.RenewToken)
 		auth.POST("/register", eh.Register)
 		auth.POST("/confirm-user", eh.ConfirmUser)
+		auth.GET("/:username", eh.UserInfo)
 	}
 
 	auth.Use(s.authMiddleware.Auth())
@@ -42,6 +43,8 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		auth.PUT("/:username/update", eh.UpdateUser)
 		auth.POST("/:username/reset-code", eh.ResetCode)
 		auth.PATCH("/:username/reset-password", eh.ResetPassword)
+		auth.POST("/:username/follow", eh.FollowUser)
+		auth.POST("/:username/unfollow", eh.UnfollowUser)
 	}
 
 	return r

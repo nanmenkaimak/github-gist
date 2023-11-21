@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/nanmenkaimak/github-gist/internal/auth/database/dbpostgres"
-	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 )
 
 type Repository interface {
@@ -10,8 +10,8 @@ type Repository interface {
 }
 
 type UserTokenRepository interface {
-	CreateUserToken(userToken entitiy.UserToken) error
-	UpdateUserToken(userToken entitiy.UserToken) error
+	CreateUserToken(userToken entity.UserToken) error
+	UpdateUserToken(userToken entity.UserToken) error
 }
 
 type Repo struct {

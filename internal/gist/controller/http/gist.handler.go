@@ -1,12 +1,13 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	"github.com/nanmenkaimak/github-gist/internal/gist/gist"
-	"net/http"
 )
 
 // swagger:route POST /v1/create-gist Gists gist_create
@@ -62,7 +63,7 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gistID)
 }
 
-// swagger:route GET /v1/all-gists Gists get_all_gists
+// swagger:route GET /v1/ Gists get_all_gists
 //
 // # Get All Gists
 //
@@ -113,7 +114,7 @@ func (h *EndpointHandler) GetAllGists(ctx *gin.Context) {
 //	 Responses:
 //		  200: GistRequest
 //		  401:
-//	   400:
+//	      400:
 func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -276,7 +277,7 @@ func (h *EndpointHandler) GetAllPublicGists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gists)
 }
 
-// swagger:route PUT /v1/{username}/{gist_id}/edit Gists update_gist_by_id
+// swagger:route PUT /v1/{username}/{gist_id} Gists update_gist_by_id
 //
 // # Update Gist By ID
 //
@@ -342,7 +343,7 @@ func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-// swagger:route DELETE /v1/{username}/{gist_id}/edit Gists delete_gist_by_id
+// swagger:route DELETE /v1/{username}/{gist_id} Gists delete_gist_by_id
 //
 // # Delete Gist By ID
 //

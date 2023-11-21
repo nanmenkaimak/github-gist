@@ -1,10 +1,10 @@
-package gist
+package auth
 
 import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 )
 
 func (a *Service) FollowUser(ctx context.Context, request FollowRequest) error {
@@ -47,7 +47,7 @@ func (a *Service) UnfollowUser(ctx context.Context, request FollowRequest) error
 	return nil
 }
 
-func (a *Service) GetAllFollowers(ctx context.Context, username string) (*[]entity.UserResponse, error) {
+func (a *Service) GetAllFollowers(ctx context.Context, username string) (*[]entity.RegisterUserRequest, error) {
 	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
@@ -61,7 +61,7 @@ func (a *Service) GetAllFollowers(ctx context.Context, username string) (*[]enti
 	return resp, nil
 }
 
-func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]entity.UserResponse, error) {
+func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]entity.RegisterUserRequest, error) {
 	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)
@@ -75,14 +75,19 @@ func (a *Service) GetAllFollowings(ctx context.Context, username string) (*[]ent
 	return resp, nil
 }
 
-func (a *Service) GetUserInfo(ctx context.Context, username string) (entity.UserResponse, error) {
+func (a *Service) GetUserInfo(ctx context.Context, username string) (entity.RegisterUserRequest, error) {
 	user, err := a.userGrpcTransport.GetUserByUsername(ctx, username)
 	if err != nil {
-		return entity.UserResponse{}, fmt.Errorf("GetUserByUsername request err: %v", err)
+		return entity.RegisterUserRequest{}, fmt.Errorf("GetUserByUsername request err: %v", err)
 	}
 
-	responseUser := entity.UserResponse{
-		ID:          user.Id,
+	userID, err := uuid.Parse(user.GetId())
+	if err != nil {
+		return entity.RegisterUserRequest{}, fmt.Errorf("converting id to uuid err; %v", err)
+	}
+
+	responseUser := entity.RegisterUserRequest{
+		ID:          userID,
 		FirstName:   user.FirstName,
 		LastName:    user.LastName,
 		Username:    user.Username,

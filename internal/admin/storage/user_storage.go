@@ -3,11 +3,12 @@ package storage
 import (
 	"context"
 	"fmt"
+	"sync"
+	"time"
+
 	"github.com/nanmenkaimak/github-gist/internal/admin/entity"
 	"github.com/nanmenkaimak/github-gist/internal/admin/repository"
 	"go.uber.org/zap"
-	"sync"
-	"time"
 )
 
 type DataStorage struct {

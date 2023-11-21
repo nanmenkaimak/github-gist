@@ -43,3 +43,9 @@ type UpdatePasswordRequest struct {
 	NewPassword string `json:"new_password"`
 	Code        string `json:"code"`
 }
+
+type FollowRequest struct {
+	FollowerID  uuid.UUID
+	FollowingID uuid.UUID
+	Username    string
+}

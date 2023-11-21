@@ -3,9 +3,11 @@ package transport
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
+	"io"
 
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
-	"github.com/nanmenkaimak/github-gist/internal/auth/entitiy"
+	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 	pb "github.com/nanmenkaimak/github-gist/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -44,7 +46,7 @@ func (t *UserGrpcTransport) GetUserByUsername(ctx context.Context, username stri
 	return resp.Result, nil
 }
 
-func (t *UserGrpcTransport) CreateUser(ctx context.Context, newUser entitiy.RegisterUserRequest) (*pb.CreateUserResponse, error) {
+func (t *UserGrpcTransport) CreateUser(ctx context.Context, newUser entity.RegisterUserRequest) (*pb.CreateUserResponse, error) {
 	resp, err := t.client.CreateUser(ctx, &pb.CreateUserRequest{
 		User: &pb.User{
 			FirstName:   newUser.FirstName,
@@ -72,7 +74,7 @@ func (t *UserGrpcTransport) ConfirmUser(ctx context.Context, email string) (*pb.
 	return resp, nil
 }
 
-func (t *UserGrpcTransport) UpdateUser(ctx context.Context, updatedUser entitiy.RegisterUserRequest) (*pb.UpdateUserResponse, error) {
+func (t *UserGrpcTransport) UpdateUser(ctx context.Context, updatedUser entity.RegisterUserRequest) (*pb.UpdateUserResponse, error) {
 	resp, err := t.client.UpdateUser(ctx, &pb.UpdateUserRequest{
 		User: &pb.User{
 			FirstName: updatedUser.FirstName,
@@ -96,4 +98,99 @@ func (t *UserGrpcTransport) UpdatePassword(ctx context.Context, email string, ne
 		return nil, fmt.Errorf("cannot UpdatePassword: %w", err)
 	}
 	return resp, nil
+}
+
+func (t *UserGrpcTransport) FollowUser(ctx context.Context, followerID string, followingID string) (*pb.FollowUserResponse, error) {
+	resp, err := t.client.FollowUser(ctx, &pb.FollowUserRequest{
+		FollowerId:  followerID,
+		FollowingId: followingID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot FollowUser: %w", err)
+	}
+	return resp, nil
+}
+
+func (t *UserGrpcTransport) UnfollowUser(ctx context.Context, followerID string, followingID string) (*pb.UnfollowUserResponse, error) {
+	resp, err := t.client.UnfollowUser(ctx, &pb.UnfollowUserRequest{
+		FollowerId:  followerID,
+		FollowingId: followingID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot FollowUser: %w", err)
+	}
+	return resp, nil
+}
+
+func (t *UserGrpcTransport) GetAllFollowers(ctx context.Context, userID string) (*[]entity.RegisterUserRequest, error) {
+	resp, err := t.client.GetAllFollowers(ctx, &pb.GetAllFollowersRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot GetAllFollowers: %w", err)
+	}
+
+	var followers []entity.RegisterUserRequest
+
+	for {
+		res, err := resp.Recv()
+		if err != nil {
+			if err == io.EOF {
+				return &followers, nil
+			}
+			return nil, err
+		}
+		follower := res.GetFollowers()
+
+		followerID, err := uuid.Parse(follower.GetId())
+		if err != nil {
+			return nil, fmt.Errorf("converting id to uuid err; %v", err)
+		}
+
+		followers = append(followers, entity.RegisterUserRequest{
+			ID:          followerID,
+			FirstName:   follower.GetFirstName(),
+			LastName:    follower.GetLastName(),
+			Username:    follower.GetUsername(),
+			Email:       follower.GetEmail(),
+			Password:    follower.GetPassword(),
+			IsConfirmed: follower.GetIsConfirmed(),
+		})
+	}
+}
+
+func (t *UserGrpcTransport) GetAllFollowings(ctx context.Context, userID string) (*[]entity.RegisterUserRequest, error) {
+	resp, err := t.client.GetAllFollowings(ctx, &pb.GetAllFollowingsRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot GetAllFollowings: %w", err)
+	}
+	var followers []entity.RegisterUserRequest
+
+	for {
+		res, err := resp.Recv()
+		if err != nil {
+			if err == io.EOF {
+				return &followers, nil
+			}
+			return nil, err
+		}
+		following := res.GetFollowings()
+
+		followingID, err := uuid.Parse(following.GetId())
+		if err != nil {
+			return nil, fmt.Errorf("converting id to uuid err; %v", err)
+		}
+
+		followers = append(followers, entity.RegisterUserRequest{
+			ID:          followingID,
+			FirstName:   following.GetFirstName(),
+			LastName:    following.GetLastName(),
+			Username:    following.GetUsername(),
+			Email:       following.GetEmail(),
+			Password:    following.GetPassword(),
+			IsConfirmed: following.GetIsConfirmed(),
+		})
+	}
 }

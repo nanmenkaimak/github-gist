@@ -11,8 +11,6 @@ type UseCase interface {
 	Star
 	Fork
 	Comment
-	Follow
-	User
 }
 
 type Gist interface {
@@ -41,15 +39,4 @@ type Comment interface {
 	GetCommentsOfGist(ctx context.Context, request GetGistRequest) (*[]entity.Comment, error)
 	DeleteComment(ctx context.Context, request DeleteRequest) error        //
 	UpdateComment(ctx context.Context, request UpdateCommentRequest) error //
-}
-
-type Follow interface {
-	FollowUser(ctx context.Context, request FollowRequest) error
-	UnfollowUser(ctx context.Context, request FollowRequest) error
-	GetAllFollowers(ctx context.Context, username string) (*[]entity.UserResponse, error)
-	GetAllFollowings(ctx context.Context, username string) (*[]entity.UserResponse, error)
-}
-
-type User interface {
-	GetUserInfo(ctx context.Context, username string) (entity.UserResponse, error)
 }
