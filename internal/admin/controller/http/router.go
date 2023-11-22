@@ -27,6 +27,12 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 	r.Use(echo_middleware.Logger())
 	r.Use(echo_middleware.Recover())
 
+	r.Use(echo_middleware.CORSWithConfig(echo_middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:8082"},
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut, http.MethodPatch},
+		AllowHeaders: []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding"},
+	}))
+
 	admin := r.Group("/api/admin/v1")
 	admin.Use(s.authMiddleware.Auth)
 

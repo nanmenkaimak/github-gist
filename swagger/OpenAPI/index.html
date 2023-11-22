@@ -41,8 +41,16 @@
       const ui = SwaggerUIBundle({
         urls: [
           {
-            name: "user-service-grpc",
+            name: "gist-service-grpc",
             url: "./gist.rest.swagger.json"
+          },
+          {
+            name: "auth-service-grpc",
+            url: "./auth.rest.swagger.json"
+          },
+          {
+            name: "admin-service-grpc",
+            url: "./admin.rest.swagger.json"
           },
         ],
         dom_id: '#swagger-ui',

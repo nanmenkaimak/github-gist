@@ -972,13 +972,5 @@
       "name": "Authorization",
       "in": "header"
     }
-  },
-  "x-tagGroups": [
-    {
-      "name": "Gist",
-      "tags": [
-        "Gists"
-      ]
-    }
-  ]
+  }
 }

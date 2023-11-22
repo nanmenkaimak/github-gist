@@ -36,6 +36,7 @@ type File struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// swagger:model GistRequest
 type GistRequest struct {
 	Gist   Gist   `json:"gist"`
 	Commit Commit `json:"commit"`

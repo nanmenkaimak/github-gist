@@ -1,8 +1,27 @@
+// Auth-service API.
+//
+//		Schemes: https, http
+//	    Host: localhost:8080
+//		BasePath: /api/auth
+//		Version: 0.0.1
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		SecurityDefinitions:
+//		  Bearer:
+//		    type: apiKey
+//		    name: Authorization
+//		    in: header
+//
+// swagger:meta
 package main
 
 import (
 	"fmt"
-
 	"github.com/nanmenkaimak/github-gist/internal/auth/applicator"
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
 	"github.com/spf13/viper"

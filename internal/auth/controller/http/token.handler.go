@@ -7,28 +7,42 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
 )
 
+// swagger:route POST /v1/login Token login
+//
+// # Login User
+//
+// # Login User
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: GenerateTokenRequest
+//			in: body
+//			required: true
+//			type: GenerateTokenRequest
+//
+//	 Responses:
+//		  201: GenerateTokenResponse
+//	   400:
 func (f *EndpointHandler) Login(ctx *gin.Context) {
-	request := struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}{}
+	var generateTokenRequest auth.GenerateTokenRequest
 
-	if err := ctx.BindJSON(&request); err != nil {
+	if err := ctx.BindJSON(&generateTokenRequest); err != nil {
 		f.logger.Errorf("failed to unmarshall body err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
 
-	err := validPassword(request.Password)
+	err := validPassword(generateTokenRequest.Password)
 	if err != nil {
 		f.logger.Errorf("validPassword err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 		return
-	}
-
-	generateTokenRequest := auth.GenerateTokenRequest{
-		Username: request.Username,
-		Password: request.Password,
 	}
 
 	userToken, err := f.authService.GenerateToken(ctx.Request.Context(), generateTokenRequest)
@@ -38,10 +52,7 @@ func (f *EndpointHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	response := struct {
-		Token        string `json:"token"`
-		RefreshToken string `json:"refresh_token"`
-	}{
+	response := auth.GenerateTokenResponse{
 		Token:        userToken.Token,
 		RefreshToken: userToken.RefreshToken,
 	}
@@ -49,10 +60,30 @@ func (f *EndpointHandler) Login(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, response)
 }
 
+// swagger:route POST /v1/renew-token Token renew_token
+//
+// # Renew Token
+//
+// # Renew token of user
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: RenewTokenRequest
+//			in: body
+//			required: true
+//			type: RenewTokenRequest
+//
+//	 Responses:
+//		  201: RenewTokenResponse
+//	   400:
 func (f *EndpointHandler) RenewToken(ctx *gin.Context) {
-	request := struct {
-		RefreshToken string `json:"refresh_token"`
-	}{}
+	var request auth.RenewTokenRequest
 
 	if err := ctx.BindJSON(&request); err != nil {
 		f.logger.Errorf("failed to unmarshall body err: %v", err)
@@ -67,9 +98,7 @@ func (f *EndpointHandler) RenewToken(ctx *gin.Context) {
 		return
 	}
 
-	response := struct {
-		Token string `json:"token"`
-	}{
+	response := auth.RenewTokenResponse{
 		Token: userToken.Token,
 	}
 

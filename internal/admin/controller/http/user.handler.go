@@ -9,6 +9,33 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/admin/entity"
 )
 
+// swagger:route PUT /v1/user/{username} User update_user
+//
+// # Update User
+//
+// # Update User
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: User
+//			in: body
+//			required: true
+//			type: User
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  204:
+//		  401:
+//	   400:
 func (h *EndpointHandler) UpdateUserByUsername(ctx echo.Context) error {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -40,6 +67,23 @@ func (h *EndpointHandler) UpdateUserByUsername(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusNoContent)
 }
 
+// swagger:route GET /v1/user/ User get_all_users
+//
+// # Get All Users
+//
+// # Get All Users
+//
+//	Produces:
+//	- application/json
+//
+//	Schemes: http, https
+//
+//		Security:
+//		  Bearer:
+//	Responses:
+//	  200: []User
+//	  401:
+//	  400:
 func (h *EndpointHandler) GetAllUsers(ctx echo.Context) error {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -60,6 +104,27 @@ func (h *EndpointHandler) GetAllUsers(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, allUsers)
 }
 
+// swagger:route GET /v1/user/{username} User get_user
+//
+// # Get All Users
+//
+// # Get All Users
+//
+//	Produces:
+//	- application/json
+//
+//	Schemes: http, https
+//
+//		Parameters:
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	Responses:
+//	  200: User
+//	  401:
+//	  400:
 func (h *EndpointHandler) GetUserByUsername(ctx echo.Context) error {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {

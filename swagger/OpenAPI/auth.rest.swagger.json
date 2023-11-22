@@ -1,0 +1,590 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "Auth-service API.",
+    "version": "0.0.1"
+  },
+  "host": "localhost:8080",
+  "basePath": "/api/auth",
+  "paths": {
+    "/v1/confirm-user": {
+      "post": {
+        "description": "# Confirm User",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Confirm User",
+        "operationId": "confirm_user",
+        "parameters": [
+          {
+            "name": "ConfirmUserRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/ConfirmUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/login": {
+      "post": {
+        "description": "# Login User",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Token"
+        ],
+        "summary": "Login User",
+        "operationId": "login",
+        "parameters": [
+          {
+            "name": "GenerateTokenRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/GenerateTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "GenerateTokenResponse",
+            "schema": {
+              "$ref": "#/definitions/GenerateTokenResponse"
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/register": {
+      "post": {
+        "description": "# Register User",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Register User",
+        "operationId": "register",
+        "parameters": [
+          {
+            "name": "RegisterUserRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/RegisterUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "RegisterUserResponse",
+            "schema": {
+              "$ref": "#/definitions/RegisterUserResponse"
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/renew-token": {
+      "post": {
+        "description": "# Renew token of user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Token"
+        ],
+        "summary": "Renew Token",
+        "operationId": "renew_token",
+        "parameters": [
+          {
+            "name": "RenewTokenRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/RenewTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "RenewTokenResponse",
+            "schema": {
+              "$ref": "#/definitions/RenewTokenResponse"
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}": {
+      "get": {
+        "description": "# Get User Info, Followers, Followings",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Get User Info",
+        "operationId": "user_info",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          },
+          {
+            "description": "follower, following",
+            "name": "tab",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "RegisterUserRequest",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RegisterUserRequest"
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/follow": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "# Follow User",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Follow"
+        ],
+        "summary": "Follow User",
+        "operationId": "follow_user",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/reset-code": {
+      "post": {
+        "description": "# Send Reset Code For Updating Password",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Send Reset Code",
+        "operationId": "reset_code",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/reset-password": {
+      "patch": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "# Update Password",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Update Password",
+        "operationId": "reset_password",
+        "parameters": [
+          {
+            "name": "UpdatePasswordRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/UpdatePasswordRequest"
+            }
+          },
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/unfollow": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "# Unfollow User",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Follow"
+        ],
+        "summary": "Unfollow User",
+        "operationId": "unfollow_user",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{username}/update": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "# Update User",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Update User",
+        "operationId": "update_user",
+        "parameters": [
+          {
+            "name": "RegisterUserRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/RegisterUserRequest"
+            }
+          },
+          {
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": ""
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ConfirmUserRequest": {
+      "type": "object",
+      "properties": {
+        "Code": {
+          "type": "string"
+        },
+        "Email": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    },
+    "GenerateTokenRequest": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        },
+        "username": {
+          "type": "string",
+          "x-go-name": "Username"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    },
+    "GenerateTokenResponse": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "x-go-name": "RefreshToken"
+        },
+        "token": {
+          "type": "string",
+          "x-go-name": "Token"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    },
+    "RegisterUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "first_name": {
+          "type": "string",
+          "x-go-name": "FirstName"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "x-go-name": "ID"
+        },
+        "is_confirmed": {
+          "type": "boolean",
+          "x-go-name": "IsConfirmed"
+        },
+        "last_name": {
+          "type": "string",
+          "x-go-name": "LastName"
+        },
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        },
+        "username": {
+          "type": "string",
+          "x-go-name": "Username"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/entity"
+    },
+    "RegisterUserResponse": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    },
+    "RenewTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "x-go-name": "RefreshToken"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    },
+    "RenewTokenResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "x-go-name": "Token"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    },
+    "ResetCodeRequest": {
+      "type": "object",
+      "properties": {
+        "UserID": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "Username": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    },
+    "UpdatePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-go-name": "Code"
+        },
+        "new_password": {
+          "type": "string",
+          "x-go-name": "NewPassword"
+        },
+        "username": {
+          "type": "string",
+          "x-go-name": "Username"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

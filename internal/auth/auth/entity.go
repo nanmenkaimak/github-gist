@@ -5,9 +5,26 @@ import (
 	"github.com/google/uuid"
 )
 
+// swagger:model GenerateTokenRequest
 type GenerateTokenRequest struct {
-	Username string
-	Password string
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// swagger:model GenerateTokenResponse
+type GenerateTokenResponse struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+// swagger:model RenewTokenRequest
+type RenewTokenRequest struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+// swagger:model RenewTokenResponse
+type RenewTokenResponse struct {
+	Token string `json:"token"`
 }
 
 type JwtUserToken struct {
@@ -24,20 +41,24 @@ type MyCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
+// swagger:model ConfirmUserRequest
 type ConfirmUserRequest struct {
 	Email string
 	Code  string
 }
 
+// swagger:model RegisterUserResponse
 type RegisterUserResponse struct {
 	ID uuid.UUID
 }
 
+// swagger:model ResetCodeRequest
 type ResetCodeRequest struct {
 	Username string
 	UserID   uuid.UUID
 }
 
+// swagger:model UpdatePasswordRequest
 type UpdatePasswordRequest struct {
 	Username    string `json:"username"`
 	NewPassword string `json:"new_password"`

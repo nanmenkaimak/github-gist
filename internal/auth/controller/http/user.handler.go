@@ -9,6 +9,28 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/auth/entity"
 )
 
+// swagger:route POST /v1/register User register
+//
+// # Register User
+//
+// # Register User
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: RegisterUserRequest
+//			in: body
+//			required: true
+//			type: RegisterUserRequest
+//
+//	 Responses:
+//		  201: RegisterUserResponse
+//	   400:
 func (f *EndpointHandler) Register(ctx *gin.Context) {
 	var request entity.RegisterUserRequest
 	if err := ctx.BindJSON(&request); err != nil {
@@ -26,11 +48,30 @@ func (f *EndpointHandler) Register(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, userID)
 }
 
+// swagger:route POST /v1/confirm-user User confirm_user
+//
+// # Confirm User
+//
+// # Confirm User
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: ConfirmUserRequest
+//			in: body
+//			required: true
+//			type: ConfirmUserRequest
+//
+//	 Responses:
+//		  204:
+//	   400:
 func (f *EndpointHandler) ConfirmUser(ctx *gin.Context) {
-	request := struct {
-		Code  string `json:"code"`
-		Email string `json:"email"`
-	}{}
+	var request auth.ConfirmUserRequest
 	if err := ctx.BindJSON(&request); err != nil {
 		f.logger.Errorf("failed to unmarshall body err: %v", err)
 		ctx.Status(http.StatusBadRequest)
@@ -49,6 +90,33 @@ func (f *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+// swagger:route PUT /v1/{username}/update User update_user
+//
+// # Update User
+//
+// # Update User
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: RegisterUserRequest
+//			in: body
+//			required: true
+//			type: RegisterUserRequest
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  204:
+//		  401:
+//	   400:
 func (f *EndpointHandler) UpdateUser(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -79,21 +147,34 @@ func (f *EndpointHandler) UpdateUser(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+// swagger:route POST /v1/{username}/reset-code User reset_code
+//
+// # Send Reset Code
+//
+// # Send Reset Code For Updating Password
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//
+//	 Responses:
+//		  204:
+//	   400:
 func (f *EndpointHandler) ResetCode(ctx *gin.Context) {
-	userID, err := middleware.GetContextUser(ctx)
-	if err != nil {
-		f.logger.Errorf("cannot find user in context")
-		ctx.Status(http.StatusUnauthorized)
-		return
-	}
 	username := ctx.Param("username")
 
 	request := auth.ResetCodeRequest{
 		Username: username,
-		UserID:   userID.ID,
 	}
 
-	err = f.authService.ResetCode(ctx.Request.Context(), request)
+	err := f.authService.ResetCode(ctx.Request.Context(), request)
 	if err != nil {
 		f.logger.Errorf("failed to ResetCode err: %v", err)
 		ctx.Status(http.StatusBadRequest)
@@ -103,6 +184,32 @@ func (f *EndpointHandler) ResetCode(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+// swagger:route PATCH /v1/{username}/reset-password User reset_password
+//
+// # Update Password
+//
+// # Update Password
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: UpdatePasswordRequest
+//			in: body
+//			required: true
+//			type: UpdatePasswordRequest
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  204:
+//	   400:
 func (f *EndpointHandler) ResetPassword(ctx *gin.Context) {
 	username := ctx.Param("username")
 

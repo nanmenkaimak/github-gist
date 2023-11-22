@@ -9,6 +9,22 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/admin/controller/http/middleware"
 )
 
+// swagger:route GET /v1/gist/ Gists get_all_gists
+//
+// # Get All Gists
+//
+// Get All Gists
+//
+//	Produces:
+//	- application/json
+//
+//		Security:
+//		  Bearer:
+//
+//	Schemes: http, https
+//	Responses:
+//	  200: []GistRequest
+//	  400:
 func (h *EndpointHandler) GetAllGists(ctx echo.Context) error {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -32,6 +48,26 @@ func (h *EndpointHandler) GetAllGists(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, allGists)
 }
 
+// swagger:route GET /v1/gist/{gist_id} Gists get_gist_by_id
+//
+// # Get Gist By ID
+//
+// # Get Gist By ID of user
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: gist_id
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  200: GistRequest
+//		  401:
+//	      400:
 func (h *EndpointHandler) GetGistByID(ctx echo.Context) error {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -58,6 +94,26 @@ func (h *EndpointHandler) GetGistByID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, gist)
 }
 
+// swagger:route DELETE /v1/gist/{gist_id} Gists delete_gist_by_id
+//
+// # Delete Gist By ID
+//
+// # Delete Gist By ID, if it user's account
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: gist_id
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  204:
+//		  401:
+//	   400:
 func (h *EndpointHandler) DeleteGistByID(ctx echo.Context) error {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {

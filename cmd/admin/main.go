@@ -1,3 +1,23 @@
+// Admin-service API.
+//
+//		Schemes: https, http
+//	    Host: localhost:8081
+//		BasePath: /api/admin
+//		Version: 0.0.1
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		SecurityDefinitions:
+//		  Bearer:
+//		    type: apiKey
+//		    name: Authorization
+//		    in: header
+//
+// swagger:meta
 package main
 
 import (

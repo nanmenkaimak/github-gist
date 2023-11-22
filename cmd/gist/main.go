@@ -1,7 +1,7 @@
 // Gist-service API.
 //
 //		Schemes: https, http
-//	 Host: localhost:8082
+//	    Host: localhost:8082
 //		BasePath: /api/gist
 //		Version: 0.0.1
 //
@@ -16,12 +16,6 @@
 //		    type: apiKey
 //		    name: Authorization
 //		    in: header
-//
-//		Extensions:
-//		 x-tagGroups:
-//	   - name: Gist
-//	     tags:
-//	      - Gists
 //
 // swagger:meta
 package main

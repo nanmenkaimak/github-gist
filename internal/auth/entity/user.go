@@ -2,6 +2,7 @@ package entity
 
 import "github.com/google/uuid"
 
+// swagger:model RegisterUserRequest
 type RegisterUserRequest struct {
 	ID          uuid.UUID `json:"id"`
 	FirstName   string    `json:"first_name"`

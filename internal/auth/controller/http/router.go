@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/gin-contrib/cors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,12 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 			"message": "Page not found",
 		})
 	})
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:8082"},
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut, http.MethodPatch},
+		AllowHeaders: []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding"},
+	}))
 
 	auth := r.Group("/api/auth/v1")
 	{

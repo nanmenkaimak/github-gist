@@ -8,6 +8,29 @@ import (
 	"net/http"
 )
 
+// swagger:route POST /v1/{username}/follow Follow follow_user
+//
+// # Follow User
+//
+// # Follow User
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  201:
+//		  401:
+//	   400:
 func (f *EndpointHandler) FollowUser(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -31,6 +54,29 @@ func (f *EndpointHandler) FollowUser(ctx *gin.Context) {
 	ctx.Status(http.StatusCreated)
 }
 
+// swagger:route POST /v1/{username}/unfollow Follow unfollow_user
+//
+// # Unfollow User
+//
+// # Unfollow User
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// -application/json
+//
+//		Schemes: http, https
+//		Parameters:
+//		  + name: username
+//			in: path
+//
+//		Security:
+//		  Bearer:
+//	 Responses:
+//		  201:
+//		  401:
+//	   400:
 func (f *EndpointHandler) UnfollowUser(ctx *gin.Context) {
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
@@ -54,6 +100,27 @@ func (f *EndpointHandler) UnfollowUser(ctx *gin.Context) {
 	ctx.Status(http.StatusCreated)
 }
 
+// swagger:route GET /v1/{username} User user_info
+//
+// # Get User Info
+//
+// # Get User Info, Followers, Followings
+//
+// Produces:
+// -application/json
+//
+//			Schemes: http, https
+//			Parameters:
+//			  + name: username
+//				in: path
+//	      + name: tab
+//	        in: query
+//	        description: follower, following
+//	        required: false
+//
+//		 Responses:
+//			  200: []RegisterUserRequest
+//		      400:
 func (f *EndpointHandler) UserInfo(ctx *gin.Context) {
 	username := ctx.Param("username")
 	tab := ctx.Query("tab")
