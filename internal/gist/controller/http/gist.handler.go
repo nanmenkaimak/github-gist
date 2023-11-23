@@ -67,7 +67,7 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 //
 // # Get All Gists
 //
-// Get All Gists
+// # Get All Gists
 //
 //	Produces:
 //	- application/json
@@ -116,11 +116,13 @@ func (h *EndpointHandler) GetAllGists(ctx *gin.Context) {
 //		  401:
 //	      400:
 func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
+	var currentUserID uuid.UUID
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
-		h.logger.Errorf("cannot find user in context")
-		ctx.Status(http.StatusUnauthorized)
-		return
+		h.logger.Warnf("cannot find user in context")
+		currentUserID = uuid.Nil
+	} else {
+		currentUserID = userID.ID
 	}
 
 	gistID, err := uuid.Parse(ctx.Param("gist_id"))
@@ -133,7 +135,7 @@ func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 	request := gist.GetGistRequest{
 		GistID:   gistID,
 		Username: username,
-		UserID:   userID.ID,
+		UserID:   currentUserID,
 	}
 
 	gist, err := h.gistService.GetGistByID(ctx.Request.Context(), request)
@@ -167,18 +169,20 @@ func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 //		  401:
 //	   400:
 func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
+	var currentUserID uuid.UUID
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
-		h.logger.Errorf("cannot find user in context")
-		ctx.Status(http.StatusUnauthorized)
-		return
+		h.logger.Warnf("cannot find user in context")
+		currentUserID = uuid.Nil
+	} else {
+		currentUserID = userID.ID
 	}
 	username := ctx.Param("username")
 	q := ctx.Query("q")
 
 	request := gist.GetGistRequest{
 		Username:  username,
-		UserID:    userID.ID,
+		UserID:    currentUserID,
 		Searching: q,
 	}
 
@@ -212,16 +216,18 @@ func (h *EndpointHandler) GetAllGistsOfUser(ctx *gin.Context) {
 //		  401:
 //	   400:
 func (h *EndpointHandler) GetAllSecretGists(ctx *gin.Context) {
+	var currentUserID uuid.UUID
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
-		h.logger.Errorf("cannot find user in context")
-		ctx.Status(http.StatusUnauthorized)
-		return
+		h.logger.Warnf("cannot find user in context")
+		currentUserID = uuid.Nil
+	} else {
+		currentUserID = userID.ID
 	}
 	username := ctx.Param("username")
 	request := gist.GetGistRequest{
 		Username:   username,
-		UserID:     userID.ID,
+		UserID:     currentUserID,
 		Visibility: false,
 	}
 
@@ -255,16 +261,18 @@ func (h *EndpointHandler) GetAllSecretGists(ctx *gin.Context) {
 //		  401:
 //	   400:
 func (h *EndpointHandler) GetAllPublicGists(ctx *gin.Context) {
+	var currentUserID uuid.UUID
 	userID, err := middleware.GetContextUser(ctx)
 	if err != nil {
-		h.logger.Errorf("cannot find user in context")
-		ctx.Status(http.StatusUnauthorized)
-		return
+		h.logger.Warnf("cannot find user in context")
+		currentUserID = uuid.Nil
+	} else {
+		currentUserID = userID.ID
 	}
 	username := ctx.Param("username")
 	request := gist.GetGistRequest{
 		Username:   username,
-		UserID:     userID.ID,
+		UserID:     currentUserID,
 		Visibility: true,
 	}
 
