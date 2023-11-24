@@ -63,6 +63,7 @@ func (s *Service) GetUserByUsername(ctx context.Context, request *pb.GetUserByUs
 			Email:       user.Email,
 			Password:    user.Password,
 			IsConfirmed: user.IsConfirmed,
+			RoleId:      int64(user.RoleID),
 		},
 	}, nil
 }
@@ -92,6 +93,7 @@ func (s *Service) GetUserByID(ctx context.Context, request *pb.GetUserByIDReques
 			Email:       user.Email,
 			Password:    user.Password,
 			IsConfirmed: user.IsConfirmed,
+			RoleId:      int64(user.RoleID),
 		},
 	}, nil
 }
@@ -156,6 +158,7 @@ func (s *Service) GetAllFollowers(request *pb.GetAllFollowersRequest, stream pb.
 			Email:       users[i].Email,
 			Password:    users[i].Password,
 			IsConfirmed: users[i].IsConfirmed,
+			RoleId:      int64(users[i].RoleID),
 		}
 		if err := stream.Send(&pb.GetAllFollowersResponse{
 			Followers: &follower,
@@ -182,6 +185,7 @@ func (s *Service) GetAllFollowings(request *pb.GetAllFollowingsRequest, stream p
 			Email:       users[i].Email,
 			Password:    users[i].Password,
 			IsConfirmed: users[i].IsConfirmed,
+			RoleId:      int64(users[i].RoleID),
 		}
 		if err := stream.Send(&pb.GetAllFollowingsResponse{
 			Followings: &following,

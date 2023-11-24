@@ -4,8 +4,28 @@ config_version: 3
 http:
   rules:
     - selector: userservice.UserService.GetUserByUsername
-      post: "/grpc/v1/getUserByLogin"
-      body: "*"
+      get: "/grpc/v1/getUserByUsername"
     - selector: userservice.UserService.CreateUser
-      post: "/grpc/v1/CreateUser"
+      post: "/grpc/v1/createUser"
+      body: "*"
+    - selector: userservice.UserService.ConfirmUser
+      post: "/grpc/v1/confirmUser"
+      body: "*"
+    - selector: userservice.UserService.GetUserByID
+      get: "/grpc/v1/getUserByID"
+    - selector: userservice.UserService.FollowUser
+      post: "/grpc/v1/followUser"
+      body: "*"
+    - selector: userservice.UserService.UnfollowUser
+      post: "/grpc/v1/unfollowUser"
+      body: "*"
+    - selector: userservice.UserService.GetAllFollowers
+      get: "/grpc/v1/getAllFollowers"
+    - selector: userservice.UserService.GetAllFollowings
+      get: "/grpc/v1/getAllFollowings"
+    - selector: userservice.UserService.UpdateUser
+      put: "/grpc/v1/updateUser"
+      body: "*"
+    - selector: userservice.UserService.UpdatePassword
+      patch: "/grpc/v1/updatePassword"
       body: "*"

@@ -38,7 +38,6 @@ func (h *EndpointHandler) GetAllGists(ctx echo.Context) error {
 		Sort:      sort,
 		UserID:    userID.ID,
 	}
-
 	allGists, err := h.adminService.GetAllGists(ctx.Request().Context(), request)
 	if err != nil {
 		h.logger.Errorf("failed to GetAllGists err: %v", err)

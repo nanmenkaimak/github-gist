@@ -19,7 +19,7 @@
   "paths": {
     "/v1/": {
       "get": {
-        "description": "Get All Gists",
+        "description": "# Get All Gists",
         "produces": [
           "application/json"
         ],

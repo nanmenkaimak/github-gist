@@ -155,6 +155,7 @@ func (t *UserGrpcTransport) GetAllFollowers(ctx context.Context, userID string) 
 			Email:       follower.GetEmail(),
 			Password:    follower.GetPassword(),
 			IsConfirmed: follower.GetIsConfirmed(),
+			RoleID:      follower.RoleId,
 		})
 	}
 }
@@ -191,6 +192,7 @@ func (t *UserGrpcTransport) GetAllFollowings(ctx context.Context, userID string)
 			Email:       following.GetEmail(),
 			Password:    following.GetPassword(),
 			IsConfirmed: following.GetIsConfirmed(),
+			RoleID:      following.RoleId,
 		})
 	}
 }

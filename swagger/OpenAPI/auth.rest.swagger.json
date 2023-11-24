@@ -511,6 +511,11 @@
           "type": "string",
           "x-go-name": "Password"
         },
+        "role_id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "RoleID"
+        },
         "username": {
           "type": "string",
           "x-go-name": "Username"

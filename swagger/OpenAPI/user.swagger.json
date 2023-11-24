@@ -520,10 +520,6 @@
         },
         "isConfirmed": {
           "type": "boolean"
-        },
-        "roleId": {
-          "type": "string",
-          "format": "int64"
         }
       }
     }

@@ -29,6 +29,7 @@ func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 	}
 
 	claims := MyCustomClaims{
+		user.RoleId,
 		userID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
@@ -45,6 +46,7 @@ func (a *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 	}
 
 	rClaims := MyCustomClaims{
+		user.RoleId,
 		userID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(40 * time.Minute)),
@@ -89,7 +91,10 @@ func (a *Service) RenewToken(ctx context.Context, refreshToken string) (*JwtRene
 		return nil, fmt.Errorf("convert refresh token err: %v", err)
 	}
 
+	roleID := int64(claims["role_id"].(float64))
+
 	newClaims := MyCustomClaims{
+		roleID,
 		userID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
@@ -120,7 +125,8 @@ func (a *Service) RenewToken(ctx context.Context, refreshToken string) (*JwtRene
 type ContextUserKey struct{}
 
 type ContextUser struct {
-	ID uuid.UUID `json:"user_id"`
+	ID     uuid.UUID `json:"user_id"`
+	RoleID int64     `json:"role_id"`
 }
 
 func (a *Service) GetJWTUser(jwtToken string) (*ContextUser, error) {
@@ -154,7 +160,10 @@ func (a *Service) getUserFromJWT(claims jwt.MapClaims) (*ContextUser, error) {
 		return nil, fmt.Errorf("formating user_id into uuid err: %v", err)
 	}
 
+	roleID := int64(claims["role_id"].(float64))
+
 	user.ID = userID
+	user.RoleID = roleID
 
 	return user, nil
 }

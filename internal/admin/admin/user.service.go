@@ -9,13 +9,6 @@ import (
 )
 
 func (a *Service) UpdateUserByUsername(ctx context.Context, request UpdateUserRequest) error {
-	ok, err := a.userRepo.IsAdmin(request.UserID)
-	if err != nil {
-		return fmt.Errorf("IsAdmin request err: %v", err)
-	}
-	if !ok {
-		return fmt.Errorf("you are not admin")
-	}
 	hashPass, err := a.hashPassword(request.UpdatedUser.Password)
 	if err != nil {
 		return fmt.Errorf("hashing password err: %v", err)
@@ -31,13 +24,6 @@ func (a *Service) UpdateUserByUsername(ctx context.Context, request UpdateUserRe
 }
 
 func (a *Service) GetAllUsers(ctx context.Context, request GetUserRequest) (*[]entity.User, error) {
-	ok, err := a.userRepo.IsAdmin(request.UserID)
-	if err != nil {
-		return nil, fmt.Errorf("IsAdmin request err: %v", err)
-	}
-	if !ok {
-		return nil, fmt.Errorf("you are not admin")
-	}
 	users, err := a.storage.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("GetAllUsers request err: %v", err)
@@ -46,13 +32,6 @@ func (a *Service) GetAllUsers(ctx context.Context, request GetUserRequest) (*[]e
 }
 
 func (a *Service) GetUserByUsername(ctx context.Context, request GetUserRequest) (*entity.User, error) {
-	ok, err := a.userRepo.IsAdmin(request.UserID)
-	if err != nil {
-		return nil, fmt.Errorf("IsAdmin request err: %v", err)
-	}
-	if !ok {
-		return nil, fmt.Errorf("you are not admin")
-	}
 	user, err := a.userRepo.GetUserByUsername(request.UpdatedUserUsername)
 	if err != nil {
 		return nil, fmt.Errorf("GetUserByUsername request err: %v", err)

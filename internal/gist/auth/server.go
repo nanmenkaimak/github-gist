@@ -12,7 +12,8 @@ import (
 type ContextUserKey struct{}
 
 type ContextUser struct {
-	ID uuid.UUID `json:"user_id"`
+	ID     uuid.UUID `json:"user_id"`
+	RoleID int64     `json:"role_id"`
 }
 
 type Service struct {
@@ -56,6 +57,9 @@ func (a *Service) getUserFromJWT(claims jwt.MapClaims) (*ContextUser, error) {
 		return nil, fmt.Errorf("formating user_id into uuid err: %v", err)
 	}
 
+	roleID := int64(claims["role_id"].(float64))
+
+	user.RoleID = roleID
 	user.ID = userID
 
 	return user, nil

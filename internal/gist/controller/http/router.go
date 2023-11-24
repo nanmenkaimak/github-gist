@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -55,6 +56,8 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 		gist.DELETE("/:username/:gist_id/comment/:comment_id", eh.DeleteComment)
 		gist.PATCH("/:username/:gist_id/comment/:comment_id", eh.UpdateComment)
 	}
+
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	return r
 }

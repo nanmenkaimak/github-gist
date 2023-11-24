@@ -16,7 +16,6 @@ type User interface {
 	UpdateUser(updatedUser entity.User) error
 	GetUserByUsername(username string) (*entity.User, error)
 	GetAllUsers() (*[]entity.User, error)
-	IsAdmin(userID uuid.UUID) (bool, error)
 }
 
 type GistRepo struct {

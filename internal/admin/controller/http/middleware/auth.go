@@ -32,8 +32,7 @@ func (j *JwtV1) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		bearer := c.Request().Header.Get(AuthorizationHeaderKey)
 		if bearer == "" {
 			j.logger.Warn("'Authorization' key missing from headers")
-			c.Response().Writer.WriteHeader(http.StatusBadRequest)
-			return nil
+			return c.NoContent(http.StatusUnauthorized)
 		}
 		var jwtToken string
 		if len(bearer) > 7 && strings.ToUpper(bearer[0:6]) == "BEARER" {
@@ -43,16 +42,20 @@ func (j *JwtV1) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 				"failed to get token from header invalidToken: %s",
 				c.Request().Header.Get(AuthorizationHeaderKey),
 			))
-			c.Response().Writer.WriteHeader(http.StatusUnauthorized)
-			return nil
+			return c.NoContent(http.StatusUnauthorized)
 		}
 
 		contextUser, err := j.authService.GetJWTUser(jwtToken)
 		if err != nil {
 			j.logger.Errorf("failed to GetJwtUser err: %v", err)
-			c.Response().Writer.WriteHeader(http.StatusUnauthorized)
-			return nil
+			return c.NoContent(http.StatusUnauthorized)
 		}
+
+		if contextUser.RoleID != 2 {
+			j.logger.Errorf("only admin have access err: %v", err)
+			return c.NoContent(http.StatusUnauthorized)
+		}
+
 		c.Set("id", contextUser)
 		return next(c)
 	}

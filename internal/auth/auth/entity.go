@@ -37,6 +37,7 @@ type JwtRenewToken struct {
 }
 
 type MyCustomClaims struct {
+	RoleID int64     `json:"role_id"`
 	UserId uuid.UUID `json:"user_id"`
 	jwt.RegisteredClaims
 }

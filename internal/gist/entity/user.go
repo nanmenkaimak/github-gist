@@ -8,4 +8,5 @@ type UserResponse struct {
 	Email       string `json:"email"`
 	Password    string `json:"password"`
 	IsConfirmed bool   `json:"is_confirmed"`
+	RoleID      int64  `json:"role_id"`
 }

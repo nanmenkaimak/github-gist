@@ -98,5 +98,6 @@ message User {
   string email = 5;
   string password = 6;
   bool is_confirmed = 7;
+  int64 role_id = 8;
 }
 
