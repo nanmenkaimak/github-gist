@@ -17,3 +17,32 @@ type Comment struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type CommentBuilder struct {
+	comment *Comment
+}
+
+func NewCommentBuilder() *CommentBuilder {
+	return &CommentBuilder{
+		comment: &Comment{},
+	}
+}
+
+func (g *CommentBuilder) SetText(text string) *CommentBuilder {
+	g.comment.Text = text
+	return g
+}
+
+func (g *CommentBuilder) SetGistID(gistID uuid.UUID) *CommentBuilder {
+	g.comment.GistID = gistID
+	return g
+}
+
+func (g *CommentBuilder) SetUserID(userID uuid.UUID) *CommentBuilder {
+	g.comment.UserID = userID
+	return g
+}
+
+func (g *CommentBuilder) Build() *Comment {
+	return g.comment
+}

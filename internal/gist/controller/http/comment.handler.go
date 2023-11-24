@@ -1,12 +1,12 @@
 package http
 
 import (
+	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http/middleware"
-	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 	"github.com/nanmenkaimak/github-gist/internal/gist/gist"
 )
 
@@ -51,17 +51,20 @@ func (h *EndpointHandler) CreateComment(ctx *gin.Context) {
 		h.logger.Errorf("parsing value from url err: %v", err)
 		return
 	}
-	var request entity.Comment
+	var request = struct {
+		Text string `json:"text"`
+	}{}
 
 	if err := ctx.BindJSON(&request); err != nil {
 		h.logger.Errorf("failed to unmarshall body err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	request.GistID = gistID
-	request.UserID = userID.ID
 
-	err = h.gistService.CreateComment(ctx.Request.Context(), request)
+	commentBuilder := entity.NewCommentBuilder()
+	newComment := commentBuilder.SetText(request.Text).SetGistID(gistID).SetUserID(userID.ID).Build()
+
+	err = h.gistService.CreateComment(ctx.Request.Context(), *newComment)
 	if err != nil {
 		h.logger.Errorf("failed to CreateComment err: %v", err)
 		ctx.Status(http.StatusBadRequest)
