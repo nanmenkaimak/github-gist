@@ -1,12 +1,11 @@
 package http
 
 import (
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http/middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 type router struct {
@@ -34,6 +33,7 @@ func (s *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 	gist := r.Group("/api/gist/v1")
 	{
+		gist.Use(eh.metricsHandler())
 		gist.Use(s.authMiddleware.Auth())
 		gist.POST("/create-gist", eh.CreateGist)
 		gist.GET("/", eh.GetAllGists)
