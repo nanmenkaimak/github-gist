@@ -1,0 +1,13 @@
+FROM golang:1.21
+
+RUN go version
+
+WORKDIR /app
+
+COPY .. .
+EXPOSE 8081
+
+RUN go mod download
+RUN go build ./cmd/admin
+
+CMD ["go", "run", "./cmd/admin"]

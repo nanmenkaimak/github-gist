@@ -1,0 +1,155 @@
+version: '3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.4.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - ./data/zookeeper/data:/data
+      - ./data/zookeeper/datalog:/datalog
+
+  kafka1:
+    image: confluentinc/cp-kafka:5.3.0
+    hostname: kafka1
+    container_name: kafka1
+    ports:
+        - "19092:19092"
+    environment:
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - ./data/kafka1/data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka1:9092"
+    depends_on:
+      - kafka1
+
+  prometheus:
+    image: prom/prometheus:v2.9.2
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana:10.2.2
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile-auth
+    container_name: auth-service
+    image: auth-service
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres-auth
+      - zookeeper
+      - redis
+      - user
+
+  user:
+    build:
+      context: .
+      dockerfile: Dockerfile-user
+    container_name: user-service
+    image: user-service
+    ports:
+      - '9091:9091'
+    depends_on:
+      - postgres-user
+
+  gist:
+    build:
+      context: .
+      dockerfile: Dockerfile-gist
+    container_name: gist-service
+    image: gist-service
+    ports:
+      - '8082:8082'
+    depends_on:
+      - postgres-gist
+
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile-admin
+    container_name: admin-service
+    image: admin-service
+    ports:
+      - '8081:8081'
+    depends_on:
+      - postgres-gist
+      - postgres-user
+
+  postgres-auth:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - postgres-auth:/var/lib/postgresql/data4
+    environment:
+      POSTGRES_DB: 'auth-service'
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+
+  postgres-user:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - postgres-user:/var/lib/postgresql/data4
+    environment:
+      POSTGRES_DB: 'user-service'
+    env_file:
+      - .env
+    ports:
+      - '5433:5432'
+
+  postgres-gist:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - postgres-gist:/var/lib/postgresql/data4
+    environment:
+      POSTGRES_DB: 'gist-service'
+    env_file:
+      - .env
+    ports:
+      - '5434:5432'
+
+volumes:
+  postgres-auth:
+    driver: local
+  postgres-user:
+    driver: local
+  postgres-gist:
+    driver: local
