@@ -10,7 +10,7 @@ import (
 	"github.com/nanmenkaimak/github-gist/internal/gist/gist"
 )
 
-// swagger:route POST /v1/create-gist Gists gist_create
+// swagger:route POST /v1/ Gists gist_create
 //
 // # Create Gist
 //
@@ -63,7 +63,7 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gistID)
 }
 
-// swagger:route GET /v1/ Gists get_all_gists
+// swagger:route GET /v1/discover Gists get_all_gists
 //
 // # Get All Gists
 //

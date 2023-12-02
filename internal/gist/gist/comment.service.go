@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/nanmenkaimak/github-gist/internal/gist/entity"
 )
 
@@ -30,21 +29,7 @@ func (a *Service) GetCommentsOfGist(ctx context.Context, request GetGistRequest)
 }
 
 func (a *Service) DeleteComment(ctx context.Context, request DeleteRequest) error {
-	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
-	if err != nil {
-		return fmt.Errorf("GetUserByUsername request err: %v", err)
-	}
-
-	userID, err := uuid.Parse(user.Id)
-	if err != nil {
-		return fmt.Errorf("parse uuid err: %v", err)
-	}
-
-	if userID != request.UserID {
-		return fmt.Errorf("it is not your comment err: %v", err)
-	}
-
-	err = a.repo.DeleteComment(request.CommentID)
+	err := a.repo.DeleteComment(request.CommentID, request.UserID)
 	if err != nil {
 		return fmt.Errorf("delete comment err: %v", err)
 	}
@@ -52,26 +37,13 @@ func (a *Service) DeleteComment(ctx context.Context, request DeleteRequest) erro
 }
 
 func (a *Service) UpdateComment(ctx context.Context, request UpdateCommentRequest) error {
-	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
-	if err != nil {
-		return fmt.Errorf("GetUserByUsername request err: %v", err)
-	}
-
-	userID, err := uuid.Parse(user.Id)
-	if err != nil {
-		return fmt.Errorf("parse uuid err: %v", err)
-	}
-
-	if userID != request.UserID {
-		return fmt.Errorf("it is not your comment err: %v", err)
-	}
-
 	updatedComment := entity.Comment{
-		ID:   request.CommentID,
-		Text: request.Text,
+		ID:     request.CommentID,
+		UserID: request.UserID,
+		Text:   request.Text,
 	}
 
-	err = a.repo.UpdateComment(updatedComment)
+	err := a.repo.UpdateComment(updatedComment)
 	if err != nil {
 		return fmt.Errorf("update comment err: %v", err)
 	}

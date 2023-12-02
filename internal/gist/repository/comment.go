@@ -23,12 +23,12 @@ func (r *Repo) GetAllCommentsOfGist(gistID uuid.UUID) ([]entity.Comment, error) 
 	return comments, nil
 }
 
-func (r *Repo) DeleteComment(id uuid.UUID) error {
-	err := r.main.Db.Where("id = ?", id).Delete(&entity.Comment{}).Error
+func (r *Repo) DeleteComment(commentID uuid.UUID, userID uuid.UUID) error {
+	err := r.main.Db.Where("id = ? and user_id = ?", commentID, userID).Delete(&entity.Comment{}).Error
 	return err
 }
 
 func (r *Repo) UpdateComment(updatedComment entity.Comment) error {
-	err := r.main.Db.Model(&updatedComment).Where("id = ?", updatedComment.ID).Update("text", updatedComment.Text).Error
+	err := r.main.Db.Model(&updatedComment).Where("id = ? and user_id = ?", updatedComment.ID, updatedComment.UserID).Update("text", updatedComment.Text).Error
 	return err
 }

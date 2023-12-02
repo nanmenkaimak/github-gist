@@ -32,7 +32,7 @@ func TestCreateGist(t *testing.T) {
 				Gist: entity.Gist{
 					Name:        "first gist",
 					Description: "che tam",
-					Visible:     true,
+					Visible:     BoolPointer(true),
 				},
 				Commit: entity.Commit{
 					Comment: "men commit",
@@ -198,4 +198,8 @@ func TestGetAllGists(t *testing.T) {
 			assert.Equal(t, err, tt.expectedError)
 		})
 	}
+}
+
+func BoolPointer(b bool) *bool {
+	return &b
 }

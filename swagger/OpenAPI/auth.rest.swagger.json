@@ -576,10 +576,6 @@
         "new_password": {
           "type": "string",
           "x-go-name": "NewPassword"
-        },
-        "username": {
-          "type": "string",
-          "x-go-name": "Username"
         }
       },
       "x-go-package": "github.com/nanmenkaimak/github-gist/internal/auth/auth"

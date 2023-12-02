@@ -18,7 +18,7 @@ type Gist struct {
 	UserID      uuid.UUID `json:"user_id" gorm:"type:uuid; not null"`
 	Name        string    `json:"name" gorm:"unique; type:varchar(50); not null"`
 	Description string    `json:"description" gorm:"type:varchar(150)"`
-	Visible     bool      `json:"visible" gorm:"default:false"`
+	Visible     *bool     `json:"visible" gorm:"default:false"`
 	IsForked    bool      `json:"is_forked" gorm:"default:false"`
 	CreatedAt   time.Time `json:"created_at" gorm:"default:now()"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"default:now()"`

@@ -36,21 +36,7 @@ func (a *Service) GetStaredGists(ctx context.Context, request OtherGistRequest) 
 }
 
 func (a *Service) DeleteStar(ctx context.Context, request DeleteRequest) error {
-	user, err := a.userGrpcTransport.GetUserByUsername(ctx, request.Username)
-	if err != nil {
-		return fmt.Errorf("GetUserByUsername request err: %v", err)
-	}
-
-	userID, err := uuid.Parse(user.Id)
-	if err != nil {
-		return fmt.Errorf("parse uuid err: %v", err)
-	}
-
-	if userID != request.UserID {
-		return fmt.Errorf("it is not your gist err: %v", err)
-	}
-
-	err = a.repo.DeleteStar(request.GistID, request.UserID)
+	err := a.repo.DeleteStar(request.GistID, request.UserID)
 	if err != nil {
 		return fmt.Errorf("delete star err: %v", err)
 	}

@@ -33,7 +33,7 @@ type ForkRepository interface {
 type CommentRepository interface {
 	CreateComment(newComment entity.Comment) error
 	GetAllCommentsOfGist(gistID uuid.UUID) ([]entity.Comment, error)
-	DeleteComment(id uuid.UUID) error
+	DeleteComment(commentID uuid.UUID, userID uuid.UUID) error
 	UpdateComment(updatedComment entity.Comment) error
 }
 

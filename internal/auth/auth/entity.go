@@ -61,7 +61,7 @@ type ResetCodeRequest struct {
 
 // swagger:model UpdatePasswordRequest
 type UpdatePasswordRequest struct {
-	Username    string `json:"username"`
+	Username    string `json:"-"`
 	NewPassword string `json:"new_password"`
 	Code        string `json:"code"`
 }

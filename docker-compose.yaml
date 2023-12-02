@@ -97,6 +97,7 @@ services:
       - '8082:8082'
     depends_on:
       - postgres-gist
+      - user
 
   admin:
     build:

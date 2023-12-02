@@ -69,17 +69,17 @@ func (mr *MockRepositoryMockRecorder) CreateGist(request any) *gomock.Call {
 }
 
 // DeleteComment mocks base method.
-func (m *MockRepository) DeleteComment(id uuid.UUID) error {
+func (m *MockRepository) DeleteComment(commentID, userID uuid.UUID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteComment", id)
+	ret := m.ctrl.Call(m, "DeleteComment", commentID, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteComment indicates an expected call of DeleteComment.
-func (mr *MockRepositoryMockRecorder) DeleteComment(id any) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) DeleteComment(commentID, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteComment", reflect.TypeOf((*MockRepository)(nil).DeleteComment), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteComment", reflect.TypeOf((*MockRepository)(nil).DeleteComment), commentID, userID)
 }
 
 // DeleteFork mocks base method.
@@ -527,17 +527,17 @@ func (mr *MockCommentRepositoryMockRecorder) CreateComment(newComment any) *gomo
 }
 
 // DeleteComment mocks base method.
-func (m *MockCommentRepository) DeleteComment(id uuid.UUID) error {
+func (m *MockCommentRepository) DeleteComment(commentID, userID uuid.UUID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteComment", id)
+	ret := m.ctrl.Call(m, "DeleteComment", commentID, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteComment indicates an expected call of DeleteComment.
-func (mr *MockCommentRepositoryMockRecorder) DeleteComment(id any) *gomock.Call {
+func (mr *MockCommentRepositoryMockRecorder) DeleteComment(commentID, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteComment", reflect.TypeOf((*MockCommentRepository)(nil).DeleteComment), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteComment", reflect.TypeOf((*MockCommentRepository)(nil).DeleteComment), commentID, userID)
 }
 
 // GetAllCommentsOfGist mocks base method.

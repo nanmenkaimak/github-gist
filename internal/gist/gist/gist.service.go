@@ -98,7 +98,7 @@ func (a *Service) GetGistsByVisibility(ctx context.Context, request GetGistReque
 		return nil, fmt.Errorf("parse uuid err: %v", err)
 	}
 
-	if userID != request.UserID && request.Visibility == false {
+	if userID != request.UserID && !request.Visibility {
 		return nil, fmt.Errorf("different user err: %v", err)
 	}
 
