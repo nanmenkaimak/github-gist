@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/nanmenkaimak/github-gist/internal/gist/controller/http/dto"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,10 +25,10 @@ import (
 //
 //		Schemes: http, https
 //		Parameters:
-//		  + name: GistRequest
+//		  + name: CreateGistRequest
 //			in: body
 //			required: true
-//			type: GistRequest
+//			type: CreateGistRequest
 //
 //		Security:
 //		  Bearer:
@@ -43,7 +44,7 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 		return
 	}
 
-	var request entity.GistRequest
+	var request dto.CreateGistRequest
 
 	if err := ctx.BindJSON(&request); err != nil {
 		h.logger.Errorf("failed to unmarshall body err: %v", err)
@@ -51,9 +52,31 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 		return
 	}
 
-	request.Gist.UserID = userID.ID
+	var gistFiles []entity.File
 
-	gistID, err := h.gistService.CreateGist(ctx.Request.Context(), request)
+	for _, file := range request.FilesRequest {
+		fileGist := entity.File{
+			Name: file.Name,
+			Code: file.Code,
+		}
+		gistFiles = append(gistFiles, fileGist)
+	}
+
+	newGist := entity.GistRequest{
+		Gist: entity.Gist{
+			Name:        request.GistRequest.Name,
+			Description: request.GistRequest.Description,
+			Visible:     request.GistRequest.Visible,
+		},
+		Commit: entity.Commit{
+			Comment: request.CommitRequest.Comment,
+		},
+		Files: gistFiles,
+	}
+
+	newGist.Gist.UserID = userID.ID
+
+	gistID, err := h.gistService.CreateGist(ctx.Request.Context(), newGist)
 	if err != nil {
 		h.logger.Errorf("failed to CreateGist err: %v", err)
 		ctx.Status(http.StatusBadRequest)
@@ -71,6 +94,16 @@ func (h *EndpointHandler) CreateGist(ctx *gin.Context) {
 //
 //	Produces:
 //	- application/json
+//
+//			Parameters:
+//	      + name: sort
+//	        in: query
+//	        description: created_at, updated_at
+//	        required: false
+//	      + name: direction
+//	        in: query
+//	        description: asc, desc
+//	        required: false
 //
 //	Schemes: http, https
 //	Responses:
@@ -296,10 +329,10 @@ func (h *EndpointHandler) GetAllPublicGists(ctx *gin.Context) {
 //
 //		Schemes: http, https
 //		Parameters:
-//		  + name: GistRequest
+//		  + name: CreateGistRequest
 //			in: body
 //			required: true
-//			type: GistRequest
+//			type: CreateGistRequest
 //		  + name: username
 //			in: path
 //		  + name: gist_id
@@ -318,6 +351,7 @@ func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 		ctx.Status(http.StatusUnauthorized)
 		return
 	}
+
 	gistID, err := uuid.Parse(ctx.Param("gist_id"))
 	if err != nil {
 		h.logger.Errorf("parsing value from url err: %v", err)
@@ -325,23 +359,46 @@ func (h *EndpointHandler) UpdateGistByID(ctx *gin.Context) {
 	}
 	username := ctx.Param("username")
 
-	var updatedGist entity.GistRequest
+	var request dto.CreateGistRequest
 
-	if err := ctx.BindJSON(&updatedGist); err != nil {
+	if err := ctx.BindJSON(&request); err != nil {
 		h.logger.Errorf("failed to unmarshall body err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
 
-	updatedGist.Gist.ID = gistID
+	var gistFiles []entity.File
 
-	request := gist.UpdateGistRequest{
+	for _, file := range request.FilesRequest {
+		fileGist := entity.File{
+			Name: file.Name,
+			Code: file.Code,
+		}
+		gistFiles = append(gistFiles, fileGist)
+	}
+
+	updatedGist := entity.GistRequest{
+		Gist: entity.Gist{
+			ID:          gistID,
+			Name:        request.GistRequest.Name,
+			Description: request.GistRequest.Description,
+			Visible:     request.GistRequest.Visible,
+		},
+		Commit: entity.Commit{
+			Comment: request.CommitRequest.Comment,
+		},
+		Files: gistFiles,
+	}
+
+	updatedGist.Gist.UserID = userID.ID
+
+	updateGistRequest := gist.UpdateGistRequest{
 		Username: username,
 		Gist:     updatedGist,
 		UserID:   userID.ID,
 	}
 
-	err = h.gistService.UpdateGistByID(ctx.Request.Context(), request)
+	err = h.gistService.UpdateGistByID(ctx.Request.Context(), updateGistRequest)
 	if err != nil {
 		h.logger.Errorf("failed to UpdateGistByID err: %v", err)
 		ctx.Status(http.StatusBadRequest)

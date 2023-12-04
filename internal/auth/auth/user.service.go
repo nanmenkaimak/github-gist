@@ -123,8 +123,6 @@ func (a *Service) ResetCode(ctx context.Context, request ResetCodeRequest) error
 		return fmt.Errorf("failed to marshall UserCodeReset err: %w", err)
 	}
 
-	fmt.Println(msg)
-
 	a.userVerificationProducer.ProduceMessage(b)
 
 	return nil

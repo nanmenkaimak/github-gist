@@ -205,8 +205,6 @@ func (f *EndpointHandler) ResetCode(ctx *gin.Context) {
 //		  + name: username
 //			in: path
 //
-//		Security:
-//		  Bearer:
 //	 Responses:
 //		  204:
 //	   400:

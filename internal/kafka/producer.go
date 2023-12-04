@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"fmt"
-
 	"github.com/IBM/sarama"
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
 )
