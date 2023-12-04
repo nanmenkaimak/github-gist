@@ -2,13 +2,14 @@ package applicator
 
 import (
 	"context"
+	"github.com/nanmenkaimak/github-gist/internal/auth/controller/consumer"
+	"github.com/nanmenkaimak/github-gist/internal/auth/outbox"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/nanmenkaimak/github-gist/internal/auth/auth"
 	"github.com/nanmenkaimak/github-gist/internal/auth/config"
-	"github.com/nanmenkaimak/github-gist/internal/auth/controller/consumer"
 	http2 "github.com/nanmenkaimak/github-gist/internal/auth/controller/http"
 	"github.com/nanmenkaimak/github-gist/internal/auth/controller/http/middleware"
 	"github.com/nanmenkaimak/github-gist/internal/auth/database/dbpostgres"
@@ -69,7 +70,9 @@ func (a *App) Run() {
 		l.Panicf("failed NewProducer err: %v", err)
 	}
 
-	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l, dbRedis)
+	repo := repository.NewRepository(mainDB, replicaDB)
+
+	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l, dbRedis, repo)
 
 	userVerificationConsumer, err := kafka.NewConsumer(l, cfg.Kafka, userVerificationConsumerCallback)
 	if err != nil {
@@ -78,7 +81,9 @@ func (a *App) Run() {
 
 	go userVerificationConsumer.Start()
 
-	repo := repository.NewRepository(mainDB, replicaDB)
+	kafkaOutbox := outbox.NewKafkaOutbox(repo, userVerificationProducer, l, cfg.Outbox.Workers, cfg.Outbox.Interval)
+
+	go kafkaOutbox.Run()
 
 	userGrpcTransport := transport.NewUserGrpcTransport(cfg.Transport.UserGrpc)
 

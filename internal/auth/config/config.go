@@ -8,6 +8,7 @@ type Config struct {
 	Auth       Auth       `yaml:"JwtSecretKey"`
 	Transport  Transport  `yaml:"Transport"`
 	Kafka      Kafka      `yaml:"Kafka"`
+	Outbox     Outbox     `yaml:"Outbox"`
 }
 
 type HttpServer struct {
@@ -53,4 +54,9 @@ type Producer struct {
 
 type Consumer struct {
 	Topics []string `yaml:"topics"`
+}
+
+type Outbox struct {
+	Interval time.Duration `yaml:"Interval"`
+	Workers  int           `yaml:"Workers"`
 }
