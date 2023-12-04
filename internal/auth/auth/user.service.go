@@ -44,9 +44,19 @@ func (a *Service) RegisterUser(ctx context.Context, request entity.RegisterUserR
 		Key:  request.Email,
 	}
 
+	messageKafka := entity.Message{
+		Code: msg.Code,
+		Key:  msg.Key,
+	}
+
 	b, err := json.Marshal(&msg)
 	if err != nil {
 		return resp, fmt.Errorf("failed to marshall UserCode err: %w", err)
+	}
+
+	err = a.repo.InsertMessage(messageKafka)
+	if err != nil {
+		return resp, fmt.Errorf("failed to insert UserCode err: %w", err)
 	}
 
 	a.userVerificationProducer.ProduceMessage(b)
@@ -112,8 +122,6 @@ func (a *Service) ResetCode(ctx context.Context, request ResetCodeRequest) error
 	if err != nil {
 		return fmt.Errorf("failed to marshall UserCodeReset err: %w", err)
 	}
-
-	fmt.Println(msg)
 
 	a.userVerificationProducer.ProduceMessage(b)
 

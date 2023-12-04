@@ -302,11 +302,6 @@
     },
     "/v1/{username}/reset-password": {
       "patch": {
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "description": "# Update Password",
         "consumes": [
           "application/json"
@@ -494,15 +489,6 @@
           "type": "string",
           "x-go-name": "FirstName"
         },
-        "id": {
-          "type": "string",
-          "format": "uuid",
-          "x-go-name": "ID"
-        },
-        "is_confirmed": {
-          "type": "boolean",
-          "x-go-name": "IsConfirmed"
-        },
         "last_name": {
           "type": "string",
           "x-go-name": "LastName"
@@ -510,11 +496,6 @@
         "password": {
           "type": "string",
           "x-go-name": "Password"
-        },
-        "role_id": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "RoleID"
         },
         "username": {
           "type": "string",

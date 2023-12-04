@@ -42,12 +42,12 @@
         "operationId": "gist_create",
         "parameters": [
           {
-            "name": "GistRequest",
+            "name": "CreateGistRequest",
             "in": "body",
             "required": true,
             "schema": {
               "type": "object",
-              "$ref": "#/definitions/GistRequest"
+              "$ref": "#/definitions/CreateGistRequest"
             }
           }
         ],
@@ -82,6 +82,18 @@
         ],
         "summary": "Get All Gists",
         "operationId": "get_all_gists",
+        "parameters": [
+          {
+            "description": "created_at, updated_at",
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "description": "asc, desc",
+            "name": "direction",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "GistRequest",
@@ -378,12 +390,12 @@
         "operationId": "update_gist_by_id",
         "parameters": [
           {
-            "name": "GistRequest",
+            "name": "CreateGistRequest",
             "in": "body",
             "required": true,
             "schema": {
               "type": "object",
-              "$ref": "#/definitions/GistRequest"
+              "$ref": "#/definitions/CreateGistRequest"
             }
           },
           {
@@ -819,6 +831,35 @@
       },
       "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/entity"
     },
+    "CommitRequest": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string",
+          "x-go-name": "Comment"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/controller/http/dto"
+    },
+    "CreateGistRequest": {
+      "type": "object",
+      "properties": {
+        "commit": {
+          "$ref": "#/definitions/CommitRequest"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileRequest"
+          },
+          "x-go-name": "FilesRequest"
+        },
+        "gist": {
+          "$ref": "#/definitions/GistRequest"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/controller/http/dto"
+    },
     "CreateGistResponse": {
       "type": "object",
       "properties": {
@@ -863,6 +904,20 @@
         }
       },
       "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/entity"
+    },
+    "FileRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-go-name": "Code"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/controller/http/dto"
     },
     "ForkGistResponse": {
       "type": "object",
@@ -920,21 +975,20 @@
     "GistRequest": {
       "type": "object",
       "properties": {
-        "commit": {
-          "$ref": "#/definitions/Commit"
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
         },
-        "files": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/File"
-          },
-          "x-go-name": "Files"
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
         },
-        "gist": {
-          "$ref": "#/definitions/Gist"
+        "visible": {
+          "type": "boolean",
+          "x-go-name": "Visible"
         }
       },
-      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/entity"
+      "x-go-package": "github.com/nanmenkaimak/github-gist/internal/gist/controller/http/dto"
     }
   },
   "securityDefinitions": {

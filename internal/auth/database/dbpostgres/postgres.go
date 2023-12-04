@@ -31,7 +31,7 @@ func New(cfg config.DbNode) (*Db, error) {
 		return nil, fmt.Errorf("db connection failed: %w", err)
 	}
 
-	err = db.AutoMigrate(&entity.UserToken{})
+	err = db.AutoMigrate(&entity.UserToken{}, &entity.Message{})
 	if err != nil {
 		return nil, fmt.Errorf("AutoMigrate err: %v", err)
 	}

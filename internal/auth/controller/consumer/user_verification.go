@@ -3,6 +3,7 @@ package consumer
 import (
 	"context"
 	"encoding/json"
+	"github.com/nanmenkaimak/github-gist/internal/auth/repository"
 	"time"
 
 	"github.com/IBM/sarama"
@@ -14,12 +15,14 @@ import (
 type UserVerificationCallback struct {
 	logger  *zap.SugaredLogger
 	dbRedis *redis.Client
+	dbRepo  repository.Repository
 }
 
-func NewUserVerificationCallback(logger *zap.SugaredLogger, dbRedis *redis.Client) *UserVerificationCallback {
+func NewUserVerificationCallback(logger *zap.SugaredLogger, dbRedis *redis.Client, dbRepo repository.Repository) *UserVerificationCallback {
 	return &UserVerificationCallback{
 		logger:  logger,
 		dbRedis: dbRedis,
+		dbRepo:  dbRepo,
 	}
 }
 
@@ -39,6 +42,11 @@ func (c *UserVerificationCallback) Callback(message <-chan *sarama.ConsumerMessa
 				err = c.dbRedis.Set(context.Background(), userCode.Key, userCode.Code, 2*time.Minute).Err()
 				if err != nil {
 					c.logger.Errorf("failed to save record value in redis err: %v", err)
+				} else {
+					err = c.dbRepo.UpdateMessage(userCode.Key)
+					if err != nil {
+						c.logger.Errorf("failed to update kafka message err: %v", err)
+					}
 				}
 			}
 		case err := <-error:
