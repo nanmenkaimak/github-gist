@@ -176,6 +176,11 @@
           {
             "name": "username",
             "in": "path"
+          },
+          {
+            "description": "search by name",
+            "name": "q",
+            "in": "query"
           }
         ],
         "responses": {

@@ -194,6 +194,10 @@ func (h *EndpointHandler) GetGistByID(ctx *gin.Context) {
 //		Parameters:
 //		  + name: username
 //			in: path
+//	      + name: q
+//	        in: query
+//	        description: search by name
+//	        required: false
 //
 //		Security:
 //		  Bearer:
