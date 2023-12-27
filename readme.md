@@ -15,8 +15,9 @@
    go mod tidy
    ```
 3. Create .env file and fill values given in .env.example file
+4. Create config.yaml file for every service in config folder, copy config.yaml.example and fill missing values
 
-4. Run docker-compose
+5. Run docker-compose
    ```
    docker-compose up
    ```

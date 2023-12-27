@@ -1,17 +1,17 @@
 GrpcServer:
-  Port:
+  Port: ":9091"
 Database:
   Main:
-    Host: '127.0.0.1'
+    Host: 'postgres-user'
     Port: '5432'
-    User:
+    User: 'postgres'
     Password:
-    Name:
+    Name: 'user-service'
     SslMode: 'disable'
   Replica:
-    Host: '127.0.0.1'
+    Host: 'postgres-user'
     Port: '5432'
-    User:
+    User: 'postgres'
     Password:
-    Name:
+    Name: 'user-service'
     SslMode: 'disable'

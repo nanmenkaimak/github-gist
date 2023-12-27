@@ -1,23 +1,23 @@
 Auth:
   JwtSecretKey:
 HttpServer:
-  Port:
-  ShutdownTimeout:
+  Port: 8082
+  ShutdownTimeout: 2s
 Database:
   Main:
-    Host: '127.0.0.1'
+    Host: 'postgres-gist'
     Port: '5432'
-    User:
+    User: 'postgres'
     Password:
-    Name:
+    Name: 'gist-service'
     SslMode: 'disable'
   Replica:
-    Host: '127.0.0.1'
+    Host: 'postgres-gist'
     Port: '5432'
-    User:
+    User: 'postgres'
     Password:
-    Name:
+    Name: 'gist-service'
     SslMode: 'disable'
 Transport:
-    UserGrpc:
-      Host: localhost:9090
+  UserGrpc:
+    Host: user-service:9091

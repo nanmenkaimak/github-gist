@@ -5,27 +5,30 @@ HttpServer:
   ShutdownTimeout: 2s
 Database:
   Main:
-    Host: '127.0.0.1'
+    Host: 'postgres-auth'
     Port: '5432'
-    User:
+    User: 'postgres'
     Password:
-    Name:
+    Name: 'auth-service'
     SslMode: 'disable'
   Replica:
-    Host: '127.0.0.1'
+    Host: 'postgres-auth'
     Port: '5432'
-    User:
+    User: 'postgres'
     Password:
-    Name:
+    Name: 'auth-service'
     SslMode: 'disable'
 Transport:
-    UserGrpc:
-      Host:
+  UserGrpc:
+    Host: user-service:9091
 Kafka:
   Brokers:
-    -
+    - kafka1:9092
   Producer:
-    topic:
+    topic: "user-verification"
   Consumer:
     topics:
-      -
+      - "user-verification"
+Outbox:
+  Interval: 1m
+  Workers: 3
